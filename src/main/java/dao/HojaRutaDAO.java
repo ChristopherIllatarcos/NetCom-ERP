@@ -127,7 +127,7 @@ public class HojaRutaDAO {
             }
         }
 
-        // 🔍 Filtro adicional por la observación (busca coincidencias con ILIKE)
+        //Filtro adicional por la observación (busca coincidencias con ILIKE)
         if (filtroObs != null && !filtroObs.trim().isEmpty()) {
             sql.append("AND hr.observaciones ILIKE ? ");
         }

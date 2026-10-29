@@ -1,10 +1,6 @@
 package dao;
 
 import conexion.ConexionDB;
-import modelo.Producto;
-import modelo.Venta;
-import modelo.DetalleVenta;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -121,7 +117,6 @@ public class VentaDAO {
                 }
             }
             System.err.println("Error al guardar la venta: " + e.getMessage());
-            e.printStackTrace();
             return false;
         } finally {
             if (con != null) {
@@ -129,7 +124,6 @@ public class VentaDAO {
                     con.setAutoCommit(true);
                     con.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -239,7 +233,6 @@ public class VentaDAO {
                 }
             }
             System.err.println("Error al registrar venta: " + e.getMessage());
-            e.printStackTrace();
             return false;
         } finally {
             if (con != null) {
@@ -247,7 +240,6 @@ public class VentaDAO {
                     con.setAutoCommit(true);
                     con.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -322,6 +314,7 @@ public class VentaDAO {
     /**
      * Obtiene el número de folio máximo registrado en la base de datos y le
      * suma 1. Si no hay ventas registradas, retorna 1.
+     * @return 
      */
     // 4. SOBRECARGA OBTENER SIGUIENTE FOLIO SIN PARÁMETROS
     public int obtenerSiguienteFolio() {

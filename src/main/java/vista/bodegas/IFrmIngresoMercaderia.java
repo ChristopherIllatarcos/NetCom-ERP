@@ -133,8 +133,8 @@ public class IFrmIngresoMercaderia extends javax.swing.JInternalFrame {
         java.util.Date fecha = jDateChooserFechaIngreso.getDate();
 
         // Obtenemos el item seleccionado del combo de motivos
-        dao.TiposDocumentoDAO.ItemCombo motivoSeleccionado
-                = (dao.TiposDocumentoDAO.ItemCombo) cmbTipoMotivo.getSelectedItem();
+        modelo.ItemCombo motivoSeleccionado
+                = (modelo.ItemCombo) cmbTipoMotivo.getSelectedItem();
         int tipoMotivoId = (motivoSeleccionado != null) ? motivoSeleccionado.getId() : 1;
 
         // Invocamos al DAO de bodegas de manera limpia y profesional
@@ -224,9 +224,9 @@ public class IFrmIngresoMercaderia extends javax.swing.JInternalFrame {
         comboGenerico.removeAllItems();
 
         dao.TiposDocumentoDAO daoDoc = new dao.TiposDocumentoDAO();
-        List<dao.TiposDocumentoDAO.ItemCombo> lista = daoDoc.listarTiposDocumentoCombo();
+        List<modelo.ItemCombo> lista = daoDoc.listarTiposDocumentoCombo();
 
-        for (dao.TiposDocumentoDAO.ItemCombo item : lista) {
+        for (modelo.ItemCombo item : lista) {
             comboGenerico.addItem(item);
         }
     }

@@ -7,42 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import modelo.ItemCombo; 
 
 public class ImpuestosDAO {
-
-    public static class ItemCombo {
-
-        private final int id;
-        private final String nombre;
-        private final double porcentaje;
-
-        public ItemCombo(int id, String nombre, double porcentaje) {
-            this.id = id;
-            this.nombre = nombre;
-            this.porcentaje = porcentaje;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public double getPorcentaje() {
-            return porcentaje;
-        }
-
-        // --- ¡Agrega este método si te faltaba! ---
-        public String getNombrePuro() {
-            return nombre;
-        }
-
-        @Override
-        public String toString() {
-            if (porcentaje <= 0) {
-                return nombre;
-            }
-            return nombre + " (" + porcentaje + "%)";
-        }
-    }
 
     // --- 1. Listar para el ComboBox principal ---
     public List<ItemCombo> listarImpuestosCombo() {
@@ -65,11 +32,9 @@ public class ImpuestosDAO {
         return lista;
     }
 
-    // --- 2. Listar para Editar/Eliminar (excluyendo la opción por defecto si deseas) ---
+    // --- 2. Listar para Editar/Eliminar ---
     public List<ItemCombo> listarImpuestosComboParaEditar() {
         List<ItemCombo> lista = new ArrayList<>();
-        // Excluimos el impuesto base con id 1 o porcentaje 0 si prefieres que no lo toquen, 
-        // o los traemos todos para que puedan editarlos libremente. Aquí traemos todos los activos:
         String sql = "SELECT id, nombre, porcentaje FROM impuestos_adicionales WHERE activo = TRUE ORDER BY nombre ASC";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -121,7 +86,6 @@ public class ImpuestosDAO {
 
     // --- 5. Eliminar (o desactivar) impuesto ---
     public boolean eliminarImpuesto(int id) {
-        // Puedes hacer un DELETE físico o un cambio de estado activo = FALSE
         String sql = "DELETE FROM impuestos_adicionales WHERE id = ?";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {

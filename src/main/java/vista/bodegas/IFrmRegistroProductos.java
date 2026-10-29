@@ -58,8 +58,8 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
     }
 
     private void botonGuardar() {
-        // 1. Validación de la familia
-        dao.ProductosDAO.ItemCombo familiaSel = (dao.ProductosDAO.ItemCombo) cmbFamiliaCategoria.getSelectedItem();
+        // 1. Validación de la familia usando el modelo global
+        modelo.ItemCombo familiaSel = (modelo.ItemCombo) cmbFamiliaCategoria.getSelectedItem();
         if (familiaSel == null || familiaSel.getId() == 0) {
             utilidades.AlertaUtil.mostrarAdvertencia(this, "Debe seleccionar una familia válida.");
             cmbFamiliaCategoria.requestFocus();
@@ -72,34 +72,33 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
             p.setCodigoBarra(txtCodigoBarra.getText().trim());
             p.setDescripcion(txtDescripcionComercial.getText().trim());
 
-            // Obtener ID seleccionado del ComboBox de Categoría
-            dao.ProductosDAO.ItemCombo cat = (dao.ProductosDAO.ItemCombo) cmbFamiliaCategoria.getSelectedItem();
+            // Obtener ID seleccionado del ComboBox de Categoría de forma limpia
+            modelo.ItemCombo cat = (modelo.ItemCombo) cmbFamiliaCategoria.getSelectedItem();
             int categoriaId = (cat != null) ? cat.getId() : 0;
-
-            // Asignar el ID al producto
             p.setCategoriaId(categoriaId);
 
             p.setActivo(rbdActivo.isSelected());
 
-            // Costos y Precios
-            p.setCostoNeto(txtCostoNeto.getText().isEmpty() ? 0.0 : Double.parseDouble(txtCostoNeto.getText().trim()));
-            p.setMargenGanancia(txtMargenGanancia.getText().isEmpty() ? 0.0 : Double.parseDouble(txtMargenGanancia.getText().trim()));
-            p.setPrecioUnitario(txtPrecioVentaPublico.getText().isEmpty() ? 0.0 : Double.parseDouble(txtPrecioVentaPublico.getText().trim()));
+            // Costos y Precios (manejo seguro de vacíos)
+            p.setCostoNeto(txtCostoNeto.getText().isEmpty() ? 0.0 : Double.parseDouble(txtCostoNeto.getText().trim().replace(",", ".")));
+            p.setMargenGanancia(txtMargenGanancia.getText().isEmpty() ? 0.0 : Double.parseDouble(txtMargenGanancia.getText().trim().replace(",", ".")));
+            p.setPrecioUnitario(txtPrecioVentaPublico.getText().isEmpty() ? 0.0 : Double.parseDouble(txtPrecioVentaPublico.getText().trim().replace(",", ".")));
 
-            // CORREGIDO: Casting seguro a ImpuestosDAO.ItemCombo
-            dao.ImpuestosDAO.ItemCombo impuesto = (dao.ImpuestosDAO.ItemCombo) cmbImpuestoAdicional.getSelectedItem();
+            // Impuesto Adicional unificado con el modelo global
+            modelo.ItemCombo impuesto = (modelo.ItemCombo) cmbImpuestoAdicional.getSelectedItem();
             p.setImpuestoAdicionalId(impuesto != null ? impuesto.getId() : 0);
 
-            // Stock y Ubicación
-            p.setStockActual(txtStockActual.getText().isEmpty() ? 0.0 : Double.parseDouble(txtStockActual.getText().trim()));
-            p.setStockMinimo(txtStokcMinimo.getText().isEmpty() ? 0.0 : Double.parseDouble(txtStokcMinimo.getText().trim()));
+            // Stock y Ubicación (manejo seguro de vacíos y nombres de txt corregidos)
+            p.setStockActual(txtStockActual.getText().isEmpty() ? 0.0 : Double.parseDouble(txtStockActual.getText().trim().replace(",", ".")));
+            p.setStockMinimo(txtStokcMinimo.getText().isEmpty() ? 0.0 : Double.parseDouble(txtStokcMinimo.getText().trim().replace(",", ".")));
 
-            // CORREGIDO: Casting seguro a BodegasDAO.ItemCombo
-            dao.BodegasDAO.ItemCombo ubicacion = (dao.BodegasDAO.ItemCombo) cmbUbicacionBodega.getSelectedItem();
+            // Ubicación de Bodega unificado con el modelo global
+            modelo.ItemCombo ubicacion = (modelo.ItemCombo) cmbUbicacionBodega.getSelectedItem();
             p.setUbicacionBodegaId(ubicacion != null ? ubicacion.getId() : 0);
 
-            dao.ProductosDAO dao = new dao.ProductosDAO();
-            if (dao.guardar(p)) {
+            // Guardado a través del DAO
+            dao.ProductosDAO daoProd = new dao.ProductosDAO();
+            if (daoProd.guardar(p)) {
                 utilidades.AlertaUtil.mostrarExito(this, "¡Producto guardado exitosamente!");
                 limpiarFormulario();
             } else {
@@ -107,7 +106,8 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
             }
 
         } catch (NumberFormatException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, revise que los campos numéricos (costos, precios, stock) sean válidos.", "Error de Formato", javax.swing.JOptionPane.WARNING_MESSAGE);
+            // Mantenemos nuestro estándar usando AlertaUtil en vez de JOptionPane suelto
+            utilidades.AlertaUtil.mostrarAdvertencia(this, "Por favor, revise que los campos numéricos (costos, precios, stock) sean válidos.");
         }
     }
 
@@ -149,7 +149,7 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
 
             for (int i = 0; i < cmbImpuestoAdicional.getItemCount(); i++) {
                 Object obj = cmbImpuestoAdicional.getItemAt(i);
-                if (obj instanceof dao.ImpuestosDAO.ItemCombo item) {
+                if (obj instanceof modelo.ItemCombo item) {
                     if (item.getId() == p.getImpuestoAdicionalId()) {
                         cmbImpuestoAdicional.setSelectedIndex(i);
                         break;
@@ -162,7 +162,7 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
 
             for (int i = 0; i < cmbUbicacionBodega.getItemCount(); i++) {
                 Object obj = cmbUbicacionBodega.getItemAt(i);
-                if (obj instanceof dao.BodegasDAO.ItemCombo item) {
+                if (obj instanceof modelo.ItemCombo item) {
                     if (item.getId() == p.getUbicacionBodegaId()) {
                         cmbUbicacionBodega.setSelectedIndex(i);
                         break;
@@ -210,7 +210,7 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
             p.setPrecioUnitario(txtPrecioVentaPublico.getText().isEmpty() ? 0.0 : Double.parseDouble(txtPrecioVentaPublico.getText().trim()));
 
             // Impuesto Adicional (Casting seguro a ImpuestosDAO)
-            dao.ImpuestosDAO.ItemCombo impuesto = (dao.ImpuestosDAO.ItemCombo) cmbImpuestoAdicional.getSelectedItem();
+            modelo.ItemCombo impuesto = (modelo.ItemCombo) cmbImpuestoAdicional.getSelectedItem();
             p.setImpuestoAdicionalId(impuesto != null ? impuesto.getId() : 0);
 
             // Stock y Ubicación
@@ -218,7 +218,7 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
             p.setStockMinimo(txtStokcMinimo.getText().isEmpty() ? 0.0 : Double.parseDouble(txtStokcMinimo.getText().trim()));
 
             // Ubicación Bodega (Casting seguro a BodegasDAO)
-            dao.BodegasDAO.ItemCombo ubicacion = (dao.BodegasDAO.ItemCombo) cmbUbicacionBodega.getSelectedItem();
+            modelo.ItemCombo ubicacion = (modelo.ItemCombo) cmbUbicacionBodega.getSelectedItem();
             p.setUbicacionBodegaId(ubicacion != null ? ubicacion.getId() : 0);
 
             dao.ProductosDAO dao = new dao.ProductosDAO();
@@ -302,14 +302,13 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
 
             case 1 -> {
                 // --- EDITAR EXISTENTE ---
-                List<dao.BodegasDAO.ItemCombo> listaEditar = daoBodega.listarBodegasComboParaEditar(); // Excluye la opción por defecto "-- SELECCIONE --"
+                List<modelo.ItemCombo> listaEditar = daoBodega.listarBodegasComboParaEditar();
                 if (listaEditar.isEmpty()) {
                     utilidades.AlertaUtil.mostrarAdvertencia(this, "No hay bodegas registradas para editar.");
                     return;
                 }
 
-                dao.BodegasDAO.ItemCombo bodegaSeleccionada = (dao.BodegasDAO.ItemCombo) javax.swing.JOptionPane.showInputDialog(
-                        this,
+                modelo.ItemCombo bodegaSeleccionada = (modelo.ItemCombo) javax.swing.JOptionPane.showInputDialog(this,
                         "Seleccione la bodega que desea corregir/editar:",
                         "Editar Bodega",
                         javax.swing.JOptionPane.QUESTION_MESSAGE,
@@ -339,13 +338,13 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
 
             case 2 -> {
                 // --- ELIMINAR / DESACTIVAR ---
-                List<dao.BodegasDAO.ItemCombo> listaEliminar = daoBodega.listarBodegasComboParaEditar();
+                List<modelo.ItemCombo> listaEliminar = daoBodega.listarBodegasComboParaEditar();
                 if (listaEliminar.isEmpty()) {
                     utilidades.AlertaUtil.mostrarAdvertencia(this, "No hay bodegas registradas para eliminar.");
                     return;
                 }
 
-                dao.BodegasDAO.ItemCombo bodegaAEliminar = (dao.BodegasDAO.ItemCombo) javax.swing.JOptionPane.showInputDialog(
+                modelo.ItemCombo bodegaAEliminar = (modelo.ItemCombo) javax.swing.JOptionPane.showInputDialog(
                         this,
                         "Seleccione la bodega que desea eliminar:",
                         "Eliminar Bodega",
@@ -425,13 +424,13 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
 
             case 1 -> {
                 // --- EDITAR EXISTENTE ---
-                List<dao.ImpuestosDAO.ItemCombo> listaEditar = daoImp.listarImpuestosComboParaEditar();
+                List<modelo.ItemCombo> listaEditar = daoImp.listarImpuestosComboParaEditar();
                 if (listaEditar.isEmpty()) {
                     utilidades.AlertaUtil.mostrarAdvertencia(this, "No hay impuestos registrados para editar.");
                     return;
                 }
 
-                dao.ImpuestosDAO.ItemCombo impSeleccionado = (dao.ImpuestosDAO.ItemCombo) javax.swing.JOptionPane.showInputDialog(
+                modelo.ItemCombo impSeleccionado = (modelo.ItemCombo) javax.swing.JOptionPane.showInputDialog(
                         this, "Seleccione el impuesto a modificar:", "Editar Impuesto",
                         javax.swing.JOptionPane.QUESTION_MESSAGE, null, listaEditar.toArray(), listaEditar.get(0)
                 );
@@ -470,13 +469,13 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
 
             case 2 -> {
                 // --- ELIMINAR ---
-                List<dao.ImpuestosDAO.ItemCombo> listaEliminar = daoImp.listarImpuestosComboParaEditar();
+                List<modelo.ItemCombo> listaEliminar = daoImp.listarImpuestosComboParaEditar();
                 if (listaEliminar.isEmpty()) {
                     utilidades.AlertaUtil.mostrarAdvertencia(this, "No hay impuestos para eliminar.");
                     return;
                 }
 
-                dao.ImpuestosDAO.ItemCombo impEliminar = (dao.ImpuestosDAO.ItemCombo) javax.swing.JOptionPane.showInputDialog(
+                modelo.ItemCombo impEliminar = (modelo.ItemCombo) javax.swing.JOptionPane.showInputDialog(
                         this, "Seleccione el impuesto a eliminar:", "Eliminar Impuesto",
                         javax.swing.JOptionPane.QUESTION_MESSAGE, null, listaEliminar.toArray(), listaEliminar.get(0)
                 );
@@ -511,9 +510,9 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
         comboGenerico.removeAllItems();
 
         dao.BodegasDAO dao = new dao.BodegasDAO();
-        List<dao.BodegasDAO.ItemCombo> bodegas = dao.listarBodegasCombo();
+        List<modelo.ItemCombo> bodegas = dao.listarBodegasCombo();
 
-        for (dao.BodegasDAO.ItemCombo b : bodegas) {
+        for (modelo.ItemCombo b : bodegas) {
             comboGenerico.addItem(b);
         }
     }
@@ -523,9 +522,9 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
         comboGenerico.removeAllItems();
 
         dao.ImpuestosDAO daoImp = new dao.ImpuestosDAO();
-        java.util.List<dao.ImpuestosDAO.ItemCombo> lista = daoImp.listarImpuestosCombo();
+        java.util.List<modelo.ItemCombo> lista = daoImp.listarImpuestosCombo();
 
-        for (dao.ImpuestosDAO.ItemCombo imp : lista) {
+        for (modelo.ItemCombo imp : lista) {
             comboGenerico.addItem(imp);
         }
     }

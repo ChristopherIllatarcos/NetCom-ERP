@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * DAO encargado de ejecutar las rutinas de mantenimiento dinámicas y
- * reindexación general en PostgreSQL para Casa Victoria.
+ * reindexación general en PostgreSQL.
  */
 public class MantenimientoDAO {
 
