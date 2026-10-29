@@ -3,15 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.mycompany</groupId>
-    <artifactId>GorisofSwing</artifactId>
+    <groupId>com.netcom</groupId>
+    <artifactId>NetCom-ERP</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    
+    <name>NetCom-ERP</name>
+    <description>Sistema ERP de gestión de inventario, bodegas, compras y ventas con Java Swing y FlatLaf</description>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
-        <exec.mainClass>com.gorisof.GorisofSwing</exec.mainClass>
+        <exec.mainClass>com.netcom.NetComERP</exec.mainClass>
     </properties>
     
     <dependencies>
@@ -45,7 +48,6 @@
             <version>1.4</version>
         </dependency>
         
-       
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
@@ -55,4 +57,3 @@
     </dependencies>
     
 </project>
-

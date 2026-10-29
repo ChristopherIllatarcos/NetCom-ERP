@@ -28,8 +28,15 @@ public class IFrmListadoCompras extends javax.swing.JInternalFrame {
         quitarBordeBarra();
         modeloPersonalizado();
         ConfiguracionVentana();
+        saltoLineaRut();
     }
-
+    
+    private void saltoLineaRut(){
+        txtFolioRut.addActionListener((java.awt.event.ActionEvent evt)-> {
+           btnFiltrarCompra.doClick();
+        });
+    }
+    
     private void modeloPersonalizado() {
         // 1. Inicializamos tu modelo personalizado primero
         modeloTablaListado = new DefaultTableModel(

@@ -34,6 +34,7 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         reflejarNombreRol();
         aplicarEfectoHover();
         configurarVentana();
+        cargarImagen();
 
     }
 
@@ -102,6 +103,16 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         ventanaVentas.setVisible(true);
     }
 
+    private void cargarImagen() {
+        try {
+            // Carga la imagen desde la carpeta resources
+            java.awt.Image icono = new javax.swing.ImageIcon(getClass().getResource("/img/icono_frame_64.png")).getImage();
+            this.setIconImage(icono);
+        } catch (Exception e) {
+            System.err.println("No se pudo cargar el ícono de la aplicación: " + e.getMessage());
+        }
+
+    }
 
     private void configurarVentana() {
         this.setTitle("Casa Victoria");
@@ -120,7 +131,7 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         });
 
     }
-    
+
     private void cargarDatosUsuario() {
         if (usuarioLogueado != null) {
 

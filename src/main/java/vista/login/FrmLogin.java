@@ -23,6 +23,7 @@ public class FrmLogin extends javax.swing.JFrame {
         cargarEstilosubrayado();
         saltoLinea();
         configuracionVentana();
+        cargarImagen();
     }
 
     private void botonAcceder() {
@@ -170,6 +171,17 @@ public class FrmLogin extends javax.swing.JFrame {
         solicitud.setLocationRelativeTo(this);
         solicitud.setVisible(true);
         this.dispose();
+    }
+
+    private void cargarImagen() {
+        try {
+            // Carga la imagen desde la carpeta resources
+            java.awt.Image icono = new javax.swing.ImageIcon(getClass().getResource("/img/icono_frame_64.png")).getImage();
+            this.setIconImage(icono);
+        } catch (Exception e) {
+            System.err.println("No se pudo cargar el ícono de la aplicación: " + e.getMessage());
+        }
+
     }
 
     private void configuracionVentana() {
