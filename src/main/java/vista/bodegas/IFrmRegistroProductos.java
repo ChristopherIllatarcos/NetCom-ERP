@@ -129,10 +129,10 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
             txtCodigoBarra.setText(p.getCodigoBarra());
             txtDescripcionComercial.setText(p.getDescripcion());
 
-            // Seleccionar la categoría correcta (ProductosDAO.ItemCombo)
+            // Seleccionar la categoría correcta
             for (int i = 0; i < cmbFamiliaCategoria.getItemCount(); i++) {
                 Object obj = cmbFamiliaCategoria.getItemAt(i);
-                if (obj instanceof dao.ProductosDAO.ItemCombo item) {
+                if (obj instanceof modelo.ItemCombo item) {
                     if (item.getId() == p.getCategoriaId()) {
                         cmbFamiliaCategoria.setSelectedIndex(i);
                         break;
@@ -184,7 +184,7 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
         }
 
         // 2. Validación de la familia
-        dao.ProductosDAO.ItemCombo familiaSel = (dao.ProductosDAO.ItemCombo) cmbFamiliaCategoria.getSelectedItem();
+        modelo.ItemCombo familiaSel = (modelo.ItemCombo) cmbFamiliaCategoria.getSelectedItem();
         if (familiaSel == null || familiaSel.getId() == 0) {
             utilidades.AlertaUtil.mostrarAdvertencia(this, "Debe seleccionar una familia válida.");
             cmbFamiliaCategoria.requestFocus();
@@ -199,7 +199,7 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
             p.setDescripcion(txtDescripcionComercial.getText().trim());
 
             // Obtener ID seleccionado del ComboBox de Categoría
-            dao.ProductosDAO.ItemCombo cat = (dao.ProductosDAO.ItemCombo) cmbFamiliaCategoria.getSelectedItem();
+            modelo.ItemCombo cat = (modelo.ItemCombo) cmbFamiliaCategoria.getSelectedItem();
             p.setCategoriaId(cat != null ? cat.getId() : 0);
 
             p.setActivo(rbdActivo.isSelected());

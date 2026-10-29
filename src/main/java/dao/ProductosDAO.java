@@ -5,30 +5,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import modelo.ItemCombo; 
 import modelo.Producto;
 
 public class ProductosDAO {
-
-    // Clase auxiliar para los ComboBox (ID y Descripción)
-    public static class ItemCombo {
-
-        private final int id;
-        private final String descripcion;
-
-        public ItemCombo(int id, String descripcion) {
-            this.id = id;
-            this.descripcion = descripcion;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        @Override
-        public String toString() {
-            return descripcion; // Lo que se muestra en el ComboBox
-        }
-    }
 
     public int obtenerIdPorCodigo(String codigo) {
         // CORREGIDO: Usamos únicamente la columna real 'codigo' y el 'id'
@@ -76,7 +56,7 @@ public class ProductosDAO {
         return null;
     }
 
-// 1. Cargar Familias (reemplaza a categorías)
+    // 1. Cargar Familias (reemplaza a categorías)
     public void cargarCategorias(javax.swing.JComboBox<ItemCombo> cmb) {
         cmb.removeAllItems();
         cmb.addItem(new ItemCombo(0, "-- SELECCIONE FAMILIA --"));
@@ -91,18 +71,16 @@ public class ProductosDAO {
         }
     }
 
-    // 2. Cargar Impuestos Adicionales (Temporal por si la tabla no existe)
+    // 2. Cargar Impuestos Adicionales
     public void cargarImpuestos(javax.swing.JComboBox<ItemCombo> cmb) {
         cmb.removeAllItems();
         cmb.addItem(new ItemCombo(0, "-- SIN IMPUESTO ADICIONAL --"));
-        // Si más adelante creas la tabla de impuestos, puedes cambiar esta consulta
     }
 
-    // 3. Cargar Ubicaciones en Bodega (Temporal por si la tabla no existe)
+    // 3. Cargar Ubicaciones en Bodega
     public void cargarUbicaciones(javax.swing.JComboBox<ItemCombo> cmb) {
         cmb.removeAllItems();
         cmb.addItem(new ItemCombo(0, "-- BODEGA PRINCIPAL --"));
-        // Si más adelante creas la tabla de ubicaciones, puedes cambiar esta consulta
     }
 
     // 4. Contar Total de Productos Registrados
@@ -151,21 +129,19 @@ public class ProductosDAO {
     // 6. Buscar Producto para el módulo de Bodegas (por código interno o de barra)
     public Producto buscarProductoBodega(String codigo) {
         Producto p = null;
-        // Buscamos si coincide con el código interno O con el código de barras
         String sql = "SELECT * FROM productos WHERE TRIM(codigo) = ? OR TRIM(codigo_barra) = ?";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             String codigoTrim = codigo.trim();
             ps.setString(1, codigoTrim);
-            ps.setString(2, codigoTrim); // Pasamos el parámetro para ambas columnas
+            ps.setString(2, codigoTrim);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     p = new Producto();
                     p.setId(rs.getInt("id"));
 
-                    // Mapeamos cada columna de forma independiente al modelo
                     p.setCodigoInterno(rs.getString("codigo"));
                     p.setCodigoBarra(rs.getString("codigo_barra"));
 
@@ -238,7 +214,7 @@ public class ProductosDAO {
                 if (rs.next()) {
                     String nombre = rs.getString("nombre");
                     String descripcion = rs.getString("descripcion");
-                    return new String[]{nombre, descripcion}; // Retornamos ambos en un arreglo
+                    return new String[]{nombre, descripcion};
                 }
             }
         } catch (java.sql.SQLException e) {
