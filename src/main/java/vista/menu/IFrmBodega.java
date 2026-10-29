@@ -1,0 +1,520 @@
+package vista.menu;
+
+import java.awt.Component;
+import java.beans.PropertyVetoException;
+import vista.FrmMenuPrincipal;
+
+/**
+ *
+ * @author caill
+ */
+public class IFrmBodega extends javax.swing.JInternalFrame {
+
+    /**
+     * Creates new form JInternalFrameBodega
+     */
+    public IFrmBodega() {
+        initComponents();
+        utilidades();
+        configurarVentana();
+    }
+
+    private void botonInventario() {
+        try {
+
+            vista.bodegas.IFrmInventario frameInventario = new vista.bodegas.IFrmInventario();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(frameInventario);
+
+            // 3. La hacemos visible y la mandamos al frente
+            frameInventario.setVisible(true);
+            frameInventario.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Hoja de Ruta: " + e.getMessage());
+        }
+    }
+
+    private void botonVentasFamilia() {
+        try {
+
+            vista.bodegas.IFrmVentasPorFamilia frameFamilia = new vista.bodegas.IFrmVentasPorFamilia();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(frameFamilia);
+
+            // 3. La hacemos visible y la mandamos al frente
+            frameFamilia.setVisible(true);
+            frameFamilia.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Hoja de Ruta: " + e.getMessage());
+        }
+    }
+
+    private void botonRegistroProducto() {
+        try {
+
+            vista.bodegas.IFrmRegistroProductos producto = new vista.bodegas.IFrmRegistroProductos();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(producto);
+
+            // 3. La hacemos visible y la mandamos al frente
+            producto.setVisible(true);
+            producto.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Registro de productos: " + e.getMessage());
+        }
+    }
+
+    private void botonRegistroFamilia() {
+        try {
+
+            vista.bodegas.IFrmRegistroFamilias familia = new vista.bodegas.IFrmRegistroFamilias();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(familia);
+
+            // 3. La hacemos visible y la mandamos al frente
+            familia.setVisible(true);
+            familia.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Registro de Familia: " + e.getMessage());
+        }
+    }
+
+    private void botonIngresoMercaderia() {
+        try {
+
+            vista.bodegas.IFrmIngresoMercaderia frame = new vista.bodegas.IFrmIngresoMercaderia();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(frame);
+
+            // 3. La hacemos visible y la mandamos al frente
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Ingreso de Mercadería: " + e.getMessage());
+        }
+    }
+
+    private void botonKardex() {
+        try {
+
+            vista.bodegas.IFrmKardexMercaderia frame = new vista.bodegas.IFrmKardexMercaderia();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(frame);
+
+            // 3. La hacemos visible y la mandamos al frente
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al Abrir Kardex de Mercadería: " + e.getMessage());
+        }
+    }
+
+    private void botonInventarioCritico() {
+        try {
+
+            vista.bodegas.IFrmInventarioCritico frame = new vista.bodegas.IFrmInventarioCritico();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(frame);
+
+            // 3. La hacemos visible y la mandamos al frente
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al Abrir Inventario Crítico: " + e.getMessage());
+        }
+    }
+
+    private void botonRotProducto() {
+        try {
+
+            vista.bodegas.IFrmRotacionVentas frame = new vista.bodegas.IFrmRotacionVentas();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(frame);
+
+            // 3. La hacemos visible y la mandamos al frente
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al Abrir Rotación de Ventas: " + e.getMessage());
+        }
+    }
+
+    private void configurarVentana() {
+        this.setTitle("Bodega");
+        this.setSize(767, 464);
+        this.setResizable(false);
+
+    }
+
+    private void utilidades() {
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnRegistroProducto, jSeparator1, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnRegistroFamilia, jSeparator2, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnIngresoMercaderia, jSeparator3, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnKardexMercaderia, jSeparator4, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnInventarioMercaderia, jSeparator5, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnInventarioCritico, jSeparator6, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnRotacionProductos, jSeparator7, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnVentasFamilia, jSeparator8, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        pnlBodega = new javax.swing.JPanel();
+        btnRegistroProducto = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        btnRegistroFamilia = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
+        btnIngresoMercaderia = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JSeparator();
+        btnKardexMercaderia = new javax.swing.JButton();
+        jSeparator4 = new javax.swing.JSeparator();
+        btnInventarioMercaderia = new javax.swing.JButton();
+        jSeparator5 = new javax.swing.JSeparator();
+        btnInventarioCritico = new javax.swing.JButton();
+        jSeparator6 = new javax.swing.JSeparator();
+        btnRotacionProductos = new javax.swing.JButton();
+        jSeparator7 = new javax.swing.JSeparator();
+        btnVentasFamilia = new javax.swing.JButton();
+        jSeparator8 = new javax.swing.JSeparator();
+
+        pnlBodega.setBackground(new java.awt.Color(255, 255, 255));
+        pnlBodega.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnRegistroProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/descripcion-general-del-producto.png"))); // NOI18N
+        btnRegistroProducto.setText("Registro de Productos");
+        btnRegistroProducto.setBorderPainted(false);
+        btnRegistroProducto.setContentAreaFilled(false);
+        btnRegistroProducto.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRegistroProducto.setFocusPainted(false);
+        btnRegistroProducto.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRegistroProducto.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRegistroProducto.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnRegistroProductoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnRegistroProductoMouseExited(evt);
+            }
+        });
+        btnRegistroProducto.addActionListener(this::btnRegistroProductoActionPerformed);
+        pnlBodega.add(btnRegistroProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, 155, 120));
+        pnlBodega.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(55, 170, 125, -1));
+
+        btnRegistroFamilia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/libro-familiar.png"))); // NOI18N
+        btnRegistroFamilia.setText("Registro de Familias");
+        btnRegistroFamilia.setBorderPainted(false);
+        btnRegistroFamilia.setContentAreaFilled(false);
+        btnRegistroFamilia.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRegistroFamilia.setFocusPainted(false);
+        btnRegistroFamilia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRegistroFamilia.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRegistroFamilia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnRegistroFamiliaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnRegistroFamiliaMouseExited(evt);
+            }
+        });
+        btnRegistroFamilia.addActionListener(this::btnRegistroFamiliaActionPerformed);
+        pnlBodega.add(btnRegistroFamilia, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 60, 155, 120));
+        pnlBodega.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 170, 120, -1));
+
+        btnIngresoMercaderia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/inventario.png"))); // NOI18N
+        btnIngresoMercaderia.setText("Ingreso de Mercadería ");
+        btnIngresoMercaderia.setBorderPainted(false);
+        btnIngresoMercaderia.setContentAreaFilled(false);
+        btnIngresoMercaderia.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnIngresoMercaderia.setFocusPainted(false);
+        btnIngresoMercaderia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnIngresoMercaderia.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnIngresoMercaderia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnIngresoMercaderiaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnIngresoMercaderiaMouseExited(evt);
+            }
+        });
+        btnIngresoMercaderia.addActionListener(this::btnIngresoMercaderiaActionPerformed);
+        pnlBodega.add(btnIngresoMercaderia, new org.netbeans.lib.awtextra.AbsoluteConstraints(385, 60, 155, 120));
+        pnlBodega.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 170, 120, -1));
+
+        btnKardexMercaderia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/gestion-de-materiales.png"))); // NOI18N
+        btnKardexMercaderia.setText("Kardex de Mercadería");
+        btnKardexMercaderia.setBorderPainted(false);
+        btnKardexMercaderia.setContentAreaFilled(false);
+        btnKardexMercaderia.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnKardexMercaderia.setFocusPainted(false);
+        btnKardexMercaderia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnKardexMercaderia.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnKardexMercaderia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnKardexMercaderiaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnKardexMercaderiaMouseExited(evt);
+            }
+        });
+        btnKardexMercaderia.addActionListener(this::btnKardexMercaderiaActionPerformed);
+        pnlBodega.add(btnKardexMercaderia, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 60, 155, 120));
+        pnlBodega.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 170, 120, -1));
+
+        btnInventarioMercaderia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/lista.png"))); // NOI18N
+        btnInventarioMercaderia.setText("Inventario de Mercadería");
+        btnInventarioMercaderia.setBorderPainted(false);
+        btnInventarioMercaderia.setContentAreaFilled(false);
+        btnInventarioMercaderia.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnInventarioMercaderia.setFocusPainted(false);
+        btnInventarioMercaderia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnInventarioMercaderia.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnInventarioMercaderia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnInventarioMercaderiaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnInventarioMercaderiaMouseExited(evt);
+            }
+        });
+        btnInventarioMercaderia.addActionListener(this::btnInventarioMercaderiaActionPerformed);
+        pnlBodega.add(btnInventarioMercaderia, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 250, 170, 120));
+        pnlBodega.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(45, 360, 140, -1));
+
+        btnInventarioCritico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/invent.png"))); // NOI18N
+        btnInventarioCritico.setText("Inventario Crítico");
+        btnInventarioCritico.setBorderPainted(false);
+        btnInventarioCritico.setContentAreaFilled(false);
+        btnInventarioCritico.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnInventarioCritico.setFocusPainted(false);
+        btnInventarioCritico.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnInventarioCritico.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnInventarioCritico.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnInventarioCriticoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnInventarioCriticoMouseExited(evt);
+            }
+        });
+        btnInventarioCritico.addActionListener(this::btnInventarioCriticoActionPerformed);
+        pnlBodega.add(btnInventarioCritico, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 250, 155, 120));
+        pnlBodega.add(jSeparator6, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 360, 120, -1));
+
+        btnRotacionProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/rotacion-de-existencias.png"))); // NOI18N
+        btnRotacionProductos.setText("Rotación de Ventas");
+        btnRotacionProductos.setBorderPainted(false);
+        btnRotacionProductos.setContentAreaFilled(false);
+        btnRotacionProductos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRotacionProductos.setFocusPainted(false);
+        btnRotacionProductos.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRotacionProductos.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRotacionProductos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnRotacionProductosMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnRotacionProductosMouseExited(evt);
+            }
+        });
+        btnRotacionProductos.addActionListener(this::btnRotacionProductosActionPerformed);
+        pnlBodega.add(btnRotacionProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 250, 155, 120));
+        pnlBodega.add(jSeparator7, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 360, 120, -1));
+
+        btnVentasFamilia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/informe-de-venta.png"))); // NOI18N
+        btnVentasFamilia.setText("Ventas por Familia");
+        btnVentasFamilia.setBorderPainted(false);
+        btnVentasFamilia.setContentAreaFilled(false);
+        btnVentasFamilia.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnVentasFamilia.setFocusPainted(false);
+        btnVentasFamilia.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnVentasFamilia.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnVentasFamilia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnVentasFamiliaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnVentasFamiliaMouseExited(evt);
+            }
+        });
+        btnVentasFamilia.addActionListener(this::btnVentasFamiliaActionPerformed);
+        pnlBodega.add(btnVentasFamilia, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 250, 155, 120));
+        pnlBodega.add(jSeparator8, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 360, 110, -1));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlBodega, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlBodega, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRegistroProductoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistroProductoMouseEntered
+        jSeparator1.setVisible(true);
+    }//GEN-LAST:event_btnRegistroProductoMouseEntered
+
+    private void btnRegistroProductoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistroProductoMouseExited
+        jSeparator1.setVisible(false);
+    }//GEN-LAST:event_btnRegistroProductoMouseExited
+
+    private void btnRegistroFamiliaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistroFamiliaMouseEntered
+        jSeparator2.setVisible(true);
+    }//GEN-LAST:event_btnRegistroFamiliaMouseEntered
+
+    private void btnRegistroFamiliaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistroFamiliaMouseExited
+        jSeparator2.setVisible(false);
+    }//GEN-LAST:event_btnRegistroFamiliaMouseExited
+
+    private void btnIngresoMercaderiaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnIngresoMercaderiaMouseEntered
+        jSeparator3.setVisible(true);
+    }//GEN-LAST:event_btnIngresoMercaderiaMouseEntered
+
+    private void btnIngresoMercaderiaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnIngresoMercaderiaMouseExited
+        jSeparator3.setVisible(false);
+    }//GEN-LAST:event_btnIngresoMercaderiaMouseExited
+
+    private void btnKardexMercaderiaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKardexMercaderiaMouseEntered
+        jSeparator4.setVisible(true);
+    }//GEN-LAST:event_btnKardexMercaderiaMouseEntered
+
+    private void btnKardexMercaderiaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKardexMercaderiaMouseExited
+        jSeparator4.setVisible(false);
+    }//GEN-LAST:event_btnKardexMercaderiaMouseExited
+
+    private void btnInventarioMercaderiaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInventarioMercaderiaMouseEntered
+        jSeparator5.setVisible(true);
+    }//GEN-LAST:event_btnInventarioMercaderiaMouseEntered
+
+    private void btnInventarioMercaderiaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInventarioMercaderiaMouseExited
+        jSeparator5.setVisible(false);
+    }//GEN-LAST:event_btnInventarioMercaderiaMouseExited
+
+    private void btnInventarioCriticoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInventarioCriticoMouseEntered
+        jSeparator6.setVisible(true);
+    }//GEN-LAST:event_btnInventarioCriticoMouseEntered
+
+    private void btnInventarioCriticoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInventarioCriticoMouseExited
+        jSeparator6.setVisible(false);
+    }//GEN-LAST:event_btnInventarioCriticoMouseExited
+
+    private void btnRotacionProductosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRotacionProductosMouseEntered
+        jSeparator7.setVisible(true);
+    }//GEN-LAST:event_btnRotacionProductosMouseEntered
+
+    private void btnRotacionProductosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRotacionProductosMouseExited
+        jSeparator7.setVisible(false);
+    }//GEN-LAST:event_btnRotacionProductosMouseExited
+
+    private void btnVentasFamiliaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVentasFamiliaMouseEntered
+        jSeparator8.setVisible(true);
+    }//GEN-LAST:event_btnVentasFamiliaMouseEntered
+
+    private void btnVentasFamiliaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVentasFamiliaMouseExited
+        jSeparator8.setVisible(false);
+    }//GEN-LAST:event_btnVentasFamiliaMouseExited
+
+    private void btnInventarioMercaderiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInventarioMercaderiaActionPerformed
+        botonInventario();
+    }//GEN-LAST:event_btnInventarioMercaderiaActionPerformed
+
+    private void btnVentasFamiliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasFamiliaActionPerformed
+        botonVentasFamilia();
+    }//GEN-LAST:event_btnVentasFamiliaActionPerformed
+
+    private void btnRegistroProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroProductoActionPerformed
+        botonRegistroProducto();
+    }//GEN-LAST:event_btnRegistroProductoActionPerformed
+
+    private void btnRegistroFamiliaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroFamiliaActionPerformed
+        botonRegistroFamilia();
+    }//GEN-LAST:event_btnRegistroFamiliaActionPerformed
+
+    private void btnIngresoMercaderiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresoMercaderiaActionPerformed
+        botonIngresoMercaderia();
+    }//GEN-LAST:event_btnIngresoMercaderiaActionPerformed
+
+    private void btnKardexMercaderiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKardexMercaderiaActionPerformed
+        botonKardex();
+    }//GEN-LAST:event_btnKardexMercaderiaActionPerformed
+
+    private void btnInventarioCriticoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInventarioCriticoActionPerformed
+        botonInventarioCritico();
+    }//GEN-LAST:event_btnInventarioCriticoActionPerformed
+
+    private void btnRotacionProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRotacionProductosActionPerformed
+        botonRotProducto();
+    }//GEN-LAST:event_btnRotacionProductosActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnIngresoMercaderia;
+    private javax.swing.JButton btnInventarioCritico;
+    private javax.swing.JButton btnInventarioMercaderia;
+    private javax.swing.JButton btnKardexMercaderia;
+    private javax.swing.JButton btnRegistroFamilia;
+    private javax.swing.JButton btnRegistroProducto;
+    private javax.swing.JButton btnRotacionProductos;
+    private javax.swing.JButton btnVentasFamilia;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
+    private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JSeparator jSeparator7;
+    private javax.swing.JSeparator jSeparator8;
+    private javax.swing.JPanel pnlBodega;
+    // End of variables declaration//GEN-END:variables
+}

@@ -1,0 +1,17 @@
+# Compilación y builds de Maven y Java
+/target/
+/build/
+/dist/
+*.class
+
+# Archivos de NetBeans y otros IDEs
+/nbproject/private/
+/build.xml
+nbproject/project.properties
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de configuración local con credenciales de BD (¡Muy importante!)
+conexion.properties

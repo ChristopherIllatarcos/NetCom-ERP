@@ -1,0 +1,549 @@
+package vista.menu;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.beans.PropertyVetoException;
+import vista.FrmMenuPrincipal;
+
+/**
+ *
+ * @author caill
+ */
+public class IFrmVentas extends javax.swing.JInternalFrame {
+
+    public IFrmVentas() {
+        initComponents();
+        utilidades();
+        configurarVentana();
+
+    }
+
+    private void botonHojaRuta() {
+        try {
+            // 1. Instanciamos la nueva ventana de Hoja de Ruta
+            vista.ventas.IFrmHojaRuta frameHojaRuta = new vista.ventas.IFrmHojaRuta();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(frameHojaRuta);
+
+            // 3. La hacemos visible y la mandamos al frente
+            frameHojaRuta.setVisible(true);
+            frameHojaRuta.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Hoja de Ruta: " + e.getMessage());
+        }
+    }
+
+    private void botonConsultaDoc() {
+        try {
+            vista.ventas.IFrmConsultaDocumentos frame = new vista.ventas.IFrmConsultaDocumentos();
+            FrmMenuPrincipal.desktopPane.add(frame);
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose(); // Cierra el menú desplegable de iconos
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Consulta de Documentos: " + e.getMessage());
+        }
+    }
+
+    private void botonComision() {
+        try {
+            vista.ventas.IFrmComisiones frame = new vista.ventas.IFrmComisiones();
+            FrmMenuPrincipal.desktopPane.add(frame);
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose(); // Cierra el menú desplegable de iconos
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Comisiones por Ventas: " + e.getMessage());
+        }
+    }
+
+    private void botonInformeVenta() {
+        try {
+            vista.ventas.IFrmReporteVentasCliente frame = new vista.ventas.IFrmReporteVentasCliente();
+            FrmMenuPrincipal.desktopPane.add(frame);
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose(); // Cierra el menú desplegable de iconos
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Comisiones por Ventas: " + e.getMessage());
+        }
+    }
+
+    private void botonComisionCobranza() {
+        try {
+            vista.ventas.IFrmComisionesCobranza frame = new vista.ventas.IFrmComisionesCobranza();
+            FrmMenuPrincipal.desktopPane.add(frame);
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose(); // Cierra el menú desplegable de iconos
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Comisiones por Cobranza: " + e.getMessage());
+        }
+    }
+
+    private void botonVentaIngreso() {
+        try {
+            // 1. Instanciamos la nueva ventana de Hoja de Ruta
+            vista.ventas.IFrmIngresoVentas frameVentas = new vista.ventas.IFrmIngresoVentas();
+
+            Component add = FrmMenuPrincipal.desktopPane.add(frameVentas);
+
+            // 3. La hacemos visible y la mandamos al frente
+            frameVentas.setVisible(true);
+            frameVentas.setSelected(true);
+            this.dispose();
+
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Ventas: " + e.getMessage());
+        }
+    }
+
+    private void botonMantencionVentas() {
+        try {
+            vista.ventas.IFrmResumenVentas frame = new vista.ventas.IFrmResumenVentas();
+            FrmMenuPrincipal.desktopPane.add(frame);
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose(); // Cierra el menú desplegable de iconos
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Resumen de Ventas: " + e.getMessage());
+        }
+    }
+
+    private void botonFichaVendedores() {
+        try {
+            vista.ventas.IFrmFichaVendedores frame = new vista.ventas.IFrmFichaVendedores();
+            FrmMenuPrincipal.desktopPane.add(frame);
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose(); // Cierra el menú desplegable de iconos
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Ficha de vendedores: " + e.getMessage());
+        }
+    }
+
+    private void botonFichaClientes() {
+        try {
+            vista.ventas.IFrmFichaClientes frame = new vista.ventas.IFrmFichaClientes();
+            FrmMenuPrincipal.desktopPane.add(frame);
+            frame.setVisible(true);
+            frame.setSelected(true);
+            this.dispose(); // Cierra el menú desplegable de iconos
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al abrir Ficha de clientes: " + e.getMessage());
+        }
+    }
+
+    private void configurarVentana() {
+        this.setTitle("Ventas");
+        this.setSize(597, 530);
+        this.setResizable(false);
+
+    }
+
+    private void utilidades() {
+        // Configuración para el primer botón
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnVentasIngreso, jSeparator2, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        // Configuración para el segundo botón
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnConsultaDocumentos, jSeparator3, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnHojaRuta, jSeparator4, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(btnMantencionVentas, jSeparator5, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnIformeVentasCli, jSeparator8, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnFichaCliente, jSeparator7, 90, 4, Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnComisionVenta, jSeparator6, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnComisionCobranza, jSeparator9, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnFichaVendedores, jSeparator10, 90, 4, java.awt.Color.LIGHT_GRAY
+        );
+
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jSeparator1 = new javax.swing.JSeparator();
+        pnlVentas = new javax.swing.JPanel();
+        btnVentasIngreso = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
+        btnHojaRuta = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JSeparator();
+        btnConsultaDocumentos = new javax.swing.JButton();
+        jSeparator4 = new javax.swing.JSeparator();
+        btnMantencionVentas = new javax.swing.JButton();
+        jSeparator5 = new javax.swing.JSeparator();
+        btnFichaCliente = new javax.swing.JButton();
+        jSeparator7 = new javax.swing.JSeparator();
+        btnIformeVentasCli = new javax.swing.JButton();
+        jSeparator8 = new javax.swing.JSeparator();
+        btnComisionVenta = new javax.swing.JButton();
+        jSeparator6 = new javax.swing.JSeparator();
+        btnComisionCobranza = new javax.swing.JButton();
+        jSeparator9 = new javax.swing.JSeparator();
+        btnFichaVendedores = new javax.swing.JButton();
+        jSeparator10 = new javax.swing.JSeparator();
+
+        pnlVentas.setBackground(new java.awt.Color(255, 255, 255));
+        pnlVentas.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnVentasIngreso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/ventas_ingreso.png"))); // NOI18N
+        btnVentasIngreso.setText("VENTAS (Ingreso)");
+        btnVentasIngreso.setBorderPainted(false);
+        btnVentasIngreso.setContentAreaFilled(false);
+        btnVentasIngreso.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnVentasIngreso.setFocusPainted(false);
+        btnVentasIngreso.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnVentasIngreso.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnVentasIngreso.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnVentasIngresoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnVentasIngresoMouseExited(evt);
+            }
+        });
+        btnVentasIngreso.addActionListener(this::btnVentasIngresoActionPerformed);
+        pnlVentas.add(btnVentasIngreso, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, 150, 120));
+
+        jSeparator2.setForeground(new java.awt.Color(0, 102, 204));
+        jSeparator2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        pnlVentas.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 155, 90, -1));
+
+        btnHojaRuta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/mapa.png"))); // NOI18N
+        btnHojaRuta.setText("Hoja de Ruta");
+        btnHojaRuta.setBorderPainted(false);
+        btnHojaRuta.setContentAreaFilled(false);
+        btnHojaRuta.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnHojaRuta.setFocusPainted(false);
+        btnHojaRuta.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnHojaRuta.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnHojaRuta.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnHojaRutaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnHojaRutaMouseExited(evt);
+            }
+        });
+        btnHojaRuta.addActionListener(this::btnHojaRutaActionPerformed);
+        pnlVentas.add(btnHojaRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 50, 150, 120));
+        pnlVentas.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 155, 120, -1));
+
+        btnConsultaDocumentos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/consulta_documentos.png"))); // NOI18N
+        btnConsultaDocumentos.setText("Consulta Documentos");
+        btnConsultaDocumentos.setBorderPainted(false);
+        btnConsultaDocumentos.setContentAreaFilled(false);
+        btnConsultaDocumentos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnConsultaDocumentos.setFocusPainted(false);
+        btnConsultaDocumentos.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnConsultaDocumentos.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConsultaDocumentos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnConsultaDocumentosMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnConsultaDocumentosMouseExited(evt);
+            }
+        });
+        btnConsultaDocumentos.addActionListener(this::btnConsultaDocumentosActionPerformed);
+        pnlVentas.add(btnConsultaDocumentos, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 50, 160, 120));
+        pnlVentas.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(425, 155, 80, -1));
+
+        btnMantencionVentas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/mantencion_ventas.png"))); // NOI18N
+        btnMantencionVentas.setText("Mantención Ventas");
+        btnMantencionVentas.setBorderPainted(false);
+        btnMantencionVentas.setContentAreaFilled(false);
+        btnMantencionVentas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnMantencionVentas.setFocusPainted(false);
+        btnMantencionVentas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnMantencionVentas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnMantencionVentas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnMantencionVentasMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnMantencionVentasMouseExited(evt);
+            }
+        });
+        btnMantencionVentas.addActionListener(this::btnMantencionVentasActionPerformed);
+        pnlVentas.add(btnMantencionVentas, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, 150, 120));
+        pnlVentas.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 300, 110, -1));
+
+        btnFichaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/perfil.png"))); // NOI18N
+        btnFichaCliente.setText("Ficha de Cliente");
+        btnFichaCliente.setBorderPainted(false);
+        btnFichaCliente.setContentAreaFilled(false);
+        btnFichaCliente.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnFichaCliente.setFocusPainted(false);
+        btnFichaCliente.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnFichaCliente.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnFichaCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnFichaClienteMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnFichaClienteMouseExited(evt);
+            }
+        });
+        btnFichaCliente.addActionListener(this::btnFichaClienteActionPerformed);
+        pnlVentas.add(btnFichaCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 190, 160, 120));
+        pnlVentas.add(jSeparator7, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 300, 100, -1));
+
+        btnIformeVentasCli.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/informe-seo.png"))); // NOI18N
+        btnIformeVentasCli.setText("Informe Ventas por Clientes");
+        btnIformeVentasCli.setBorderPainted(false);
+        btnIformeVentasCli.setContentAreaFilled(false);
+        btnIformeVentasCli.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnIformeVentasCli.setFocusPainted(false);
+        btnIformeVentasCli.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnIformeVentasCli.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnIformeVentasCli.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnIformeVentasCliMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnIformeVentasCliMouseExited(evt);
+            }
+        });
+        btnIformeVentasCli.addActionListener(this::btnIformeVentasCliActionPerformed);
+        pnlVentas.add(btnIformeVentasCli, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 190, 190, 120));
+        pnlVentas.add(jSeparator8, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 300, 140, 5));
+
+        btnComisionVenta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/comision.png"))); // NOI18N
+        btnComisionVenta.setText("Comisiones por Ventas");
+        btnComisionVenta.setBorderPainted(false);
+        btnComisionVenta.setContentAreaFilled(false);
+        btnComisionVenta.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnComisionVenta.setFocusPainted(false);
+        btnComisionVenta.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnComisionVenta.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnComisionVenta.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnComisionVentaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnComisionVentaMouseExited(evt);
+            }
+        });
+        btnComisionVenta.addActionListener(this::btnComisionVentaActionPerformed);
+        pnlVentas.add(btnComisionVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 330, 190, 120));
+        pnlVentas.add(jSeparator6, new org.netbeans.lib.awtextra.AbsoluteConstraints(45, 440, 140, -1));
+
+        btnComisionCobranza.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/cobranza.png"))); // NOI18N
+        btnComisionCobranza.setText("Comisión por Cobranza");
+        btnComisionCobranza.setBorderPainted(false);
+        btnComisionCobranza.setContentAreaFilled(false);
+        btnComisionCobranza.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnComisionCobranza.setFocusPainted(false);
+        btnComisionCobranza.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnComisionCobranza.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnComisionCobranza.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnComisionCobranzaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnComisionCobranzaMouseExited(evt);
+            }
+        });
+        btnComisionCobranza.addActionListener(this::btnComisionCobranzaActionPerformed);
+        pnlVentas.add(btnComisionCobranza, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 330, 190, 120));
+        pnlVentas.add(jSeparator9, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 440, 140, -1));
+
+        btnFichaVendedores.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/carnet-de-identidad.png"))); // NOI18N
+        btnFichaVendedores.setText("Ficha de Vendedores");
+        btnFichaVendedores.setBorderPainted(false);
+        btnFichaVendedores.setContentAreaFilled(false);
+        btnFichaVendedores.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnFichaVendedores.setFocusPainted(false);
+        btnFichaVendedores.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnFichaVendedores.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnFichaVendedores.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnFichaVendedoresMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnFichaVendedoresMouseExited(evt);
+            }
+        });
+        btnFichaVendedores.addActionListener(this::btnFichaVendedoresActionPerformed);
+        pnlVentas.add(btnFichaVendedores, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 330, 180, 120));
+        pnlVentas.add(jSeparator10, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 440, 130, -1));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnlVentas, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnVentasIngresoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVentasIngresoMouseEntered
+        jSeparator2.setVisible(true);
+    }//GEN-LAST:event_btnVentasIngresoMouseEntered
+
+    private void btnVentasIngresoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVentasIngresoMouseExited
+        jSeparator2.setVisible(false); // Se esconde la línea cuando el cursor se va
+    }//GEN-LAST:event_btnVentasIngresoMouseExited
+
+    private void btnHojaRutaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHojaRutaMouseEntered
+        jSeparator4.setVisible(true);
+    }//GEN-LAST:event_btnHojaRutaMouseEntered
+
+    private void btnHojaRutaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHojaRutaMouseExited
+        jSeparator4.setVisible(false);
+    }//GEN-LAST:event_btnHojaRutaMouseExited
+
+    private void btnHojaRutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHojaRutaActionPerformed
+        botonHojaRuta();
+    }//GEN-LAST:event_btnHojaRutaActionPerformed
+
+    private void btnConsultaDocumentosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConsultaDocumentosMouseEntered
+        jSeparator3.setVisible(true);
+    }//GEN-LAST:event_btnConsultaDocumentosMouseEntered
+
+    private void btnConsultaDocumentosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConsultaDocumentosMouseExited
+        jSeparator3.setVisible(false);
+    }//GEN-LAST:event_btnConsultaDocumentosMouseExited
+
+    private void btnConsultaDocumentosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultaDocumentosActionPerformed
+        botonConsultaDoc();
+    }//GEN-LAST:event_btnConsultaDocumentosActionPerformed
+
+    private void btnFichaClienteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFichaClienteMouseEntered
+        jSeparator7.setVisible(true);
+    }//GEN-LAST:event_btnFichaClienteMouseEntered
+
+    private void btnFichaClienteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFichaClienteMouseExited
+        jSeparator7.setVisible(false);
+    }//GEN-LAST:event_btnFichaClienteMouseExited
+
+    private void btnMantencionVentasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMantencionVentasMouseExited
+        jSeparator5.setVisible(false);
+    }//GEN-LAST:event_btnMantencionVentasMouseExited
+
+    private void btnMantencionVentasMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMantencionVentasMouseEntered
+        jSeparator5.setVisible(true);
+    }//GEN-LAST:event_btnMantencionVentasMouseEntered
+
+    private void btnIformeVentasCliMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnIformeVentasCliMouseEntered
+        jSeparator8.setVisible(true);
+    }//GEN-LAST:event_btnIformeVentasCliMouseEntered
+
+    private void btnIformeVentasCliMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnIformeVentasCliMouseExited
+        jSeparator8.setVisible(false);
+    }//GEN-LAST:event_btnIformeVentasCliMouseExited
+
+    private void btnComisionVentaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComisionVentaMouseEntered
+        jSeparator6.setVisible(true);
+    }//GEN-LAST:event_btnComisionVentaMouseEntered
+
+    private void btnComisionVentaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComisionVentaMouseExited
+        jSeparator6.setVisible(false);
+    }//GEN-LAST:event_btnComisionVentaMouseExited
+
+    private void btnComisionCobranzaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComisionCobranzaMouseEntered
+        jSeparator9.setVisible(true);
+    }//GEN-LAST:event_btnComisionCobranzaMouseEntered
+
+    private void btnComisionCobranzaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnComisionCobranzaMouseExited
+        jSeparator9.setVisible(false);
+    }//GEN-LAST:event_btnComisionCobranzaMouseExited
+
+    private void btnFichaVendedoresMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFichaVendedoresMouseEntered
+        jSeparator10.setVisible(true);
+    }//GEN-LAST:event_btnFichaVendedoresMouseEntered
+
+    private void btnFichaVendedoresMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFichaVendedoresMouseExited
+        jSeparator10.setVisible(false);
+    }//GEN-LAST:event_btnFichaVendedoresMouseExited
+
+    private void btnComisionVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComisionVentaActionPerformed
+        botonComision();
+    }//GEN-LAST:event_btnComisionVentaActionPerformed
+
+    private void btnIformeVentasCliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIformeVentasCliActionPerformed
+        botonInformeVenta();
+    }//GEN-LAST:event_btnIformeVentasCliActionPerformed
+
+    private void btnComisionCobranzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComisionCobranzaActionPerformed
+        botonComisionCobranza();
+    }//GEN-LAST:event_btnComisionCobranzaActionPerformed
+
+    private void btnVentasIngresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasIngresoActionPerformed
+        botonVentaIngreso();
+    }//GEN-LAST:event_btnVentasIngresoActionPerformed
+
+    private void btnMantencionVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMantencionVentasActionPerformed
+        botonMantencionVentas();
+    }//GEN-LAST:event_btnMantencionVentasActionPerformed
+
+    private void btnFichaVendedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFichaVendedoresActionPerformed
+        botonFichaVendedores();
+    }//GEN-LAST:event_btnFichaVendedoresActionPerformed
+
+    private void btnFichaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFichaClienteActionPerformed
+        botonFichaClientes();
+    }//GEN-LAST:event_btnFichaClienteActionPerformed
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnComisionCobranza;
+    private javax.swing.JButton btnComisionVenta;
+    private javax.swing.JButton btnConsultaDocumentos;
+    private javax.swing.JButton btnFichaCliente;
+    private javax.swing.JButton btnFichaVendedores;
+    private javax.swing.JButton btnHojaRuta;
+    private javax.swing.JButton btnIformeVentasCli;
+    private javax.swing.JButton btnMantencionVentas;
+    private javax.swing.JButton btnVentasIngreso;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator10;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
+    private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JSeparator jSeparator7;
+    private javax.swing.JSeparator jSeparator8;
+    private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JPanel pnlVentas;
+    // End of variables declaration//GEN-END:variables
+}
