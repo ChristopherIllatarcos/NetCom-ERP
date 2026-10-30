@@ -21,8 +21,8 @@ public class PnlBienvenida extends javax.swing.JPanel {
         String textoFecha = fechaActual.format(formato).toUpperCase();
 
         try {
-            // 2. Título Principal "Casa Victoria" - ¡AHORA MÁS LLAMATIVO!
-            JLabel lblLogoTitulo = new JLabel("<html><font color='#003366'>Casa</font> <font color='#D4AF37'>Victoria</font></html>");
+            // 2. Título Principal "Casa Victoria" 
+            JLabel lblLogoTitulo = new JLabel("<html><font color='#003366'>Casa</font><font color='#D4AF37'>Victoria</font></html>");
             lblLogoTitulo.setFont(new java.awt.Font("Century Gothic", java.awt.Font.BOLD, 56));
             lblLogoTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -51,7 +51,7 @@ public class PnlBienvenida extends javax.swing.JPanel {
             lblContacto.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
             lblContacto.setHorizontalAlignment(SwingConstants.CENTER);
 
-            // En tu PnlBienvenida.java
+           
             int anchoEspacioBlanco = 800;
             int margenX = -60; // ¡Número negativo! Esto obliga al AbsoluteLayout a arrastrar el texto hacia la izquierda de la pantalla
 

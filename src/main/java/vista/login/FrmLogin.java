@@ -176,7 +176,7 @@ public class FrmLogin extends javax.swing.JFrame {
     private void cargarImagen() {
         try {
             // Carga la imagen desde la carpeta resources
-            java.awt.Image icono = new javax.swing.ImageIcon(getClass().getResource("/img/icono_frame_64.png")).getImage();
+            java.awt.Image icono = new javax.swing.ImageIcon(getClass().getResource("/img/portada64.png")).getImage();
             this.setIconImage(icono);
         } catch (Exception e) {
             System.err.println("No se pudo cargar el ícono de la aplicación: " + e.getMessage());
@@ -185,7 +185,7 @@ public class FrmLogin extends javax.swing.JFrame {
     }
 
     private void configuracionVentana() {
-        this.setTitle("INICIAR SESIÓN");
+        //this.setTitle("INICIAR SESIÓN");
         this.setSize(720, 500);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
@@ -218,7 +218,6 @@ public class FrmLogin extends javax.swing.JFrame {
                 // Azul más claro cuando pones el mouse encima (Ej: Celeste/Azul claro moderno)
                 lblOlvidemiContrasena.setForeground(new java.awt.Color(51, 153, 255));
 
-                // Opcional: Si quieres que aparezca subrayado al pasar el mouse por HTML
                 lblOlvidemiContrasena.setText("<html><u>¿Olvidaste tu contraseña?</u></html>");
             }
 
@@ -300,8 +299,6 @@ public class FrmLogin extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlpresent = new utilidades.PanelImagenFondo("/img/portada.jpeg")
-        ;
         pnllogin = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -317,18 +314,21 @@ public class FrmLogin extends javax.swing.JFrame {
         btnAcceder = new utilidades.BotonRedondeado("ACCEDER");
         btnAcceso = new utilidades.BotonRedondeado("Solicitar acceso")
         ;
+        jLabel11 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        lblPortada = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        pnlpresent.setBackground(new java.awt.Color(255, 255, 255));
-        pnlpresent.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        getContentPane().add(pnlpresent, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, 500));
-
         pnllogin.setBackground(new java.awt.Color(255, 255, 255));
         pnllogin.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/usuarioLogin.png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/portada64.png"))); // NOI18N
         pnllogin.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(135, 30, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -386,7 +386,7 @@ public class FrmLogin extends javax.swing.JFrame {
         });
         pnllogin.add(lblOlvidemiContrasena, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 240, -1, -1));
 
-        btnAcceder.setBackground(new java.awt.Color(0, 102, 204));
+        btnAcceder.setBackground(new java.awt.Color(0, 51, 153));
         btnAcceder.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnAcceder.setForeground(new java.awt.Color(255, 255, 255));
         btnAcceder.setText("ACCEDER");
@@ -400,6 +400,38 @@ public class FrmLogin extends javax.swing.JFrame {
         pnllogin.add(btnAcceso, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 340, 200, 35));
 
         getContentPane().add(pnllogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 0, 360, 500));
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setText("HOLA,");
+        getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 160, -1, -1));
+
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel13.setText("¡BIENVENIDO!");
+        getContentPane().add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(38, 200, -1, -1));
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("NetCom ERP");
+        getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, -1, -1));
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Comercial.");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 390, 90, -1));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText(" Sistema de Control Logístico y Moblaje");
+        jLabel5.setToolTipText("");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, 280, 20));
+
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/portada64.png"))); // NOI18N
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
+
+        lblPortada.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/fondo8.jpg"))); // NOI18N
+        getContentPane().add(lblPortada, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, 500));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -454,15 +486,21 @@ public class FrmLogin extends javax.swing.JFrame {
     private javax.swing.JButton btnAcceso;
     private javax.swing.JCheckBox cboRecordarme;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel lblOjoAbieto;
     private javax.swing.JLabel lblOlvidemiContrasena;
+    private javax.swing.JLabel lblPortada;
     private javax.swing.JPanel pnlPass;
     private javax.swing.JPanel pnlUser;
     private javax.swing.JPanel pnllogin;
-    private javax.swing.JPanel pnlpresent;
     private javax.swing.JPasswordField txtContrasena;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables

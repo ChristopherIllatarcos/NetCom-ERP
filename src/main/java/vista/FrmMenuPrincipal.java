@@ -5,7 +5,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.border.MatteBorder;
 
 /**
@@ -106,7 +105,7 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
     private void cargarImagen() {
         try {
             // Carga la imagen desde la carpeta resources
-            java.awt.Image icono = new javax.swing.ImageIcon(getClass().getResource("/img/icono_frame_64.png")).getImage();
+            java.awt.Image icono = new javax.swing.ImageIcon(getClass().getResource("/img/portada64.png")).getImage();
             this.setIconImage(icono);
         } catch (Exception e) {
             System.err.println("No se pudo cargar el ícono de la aplicación: " + e.getMessage());
@@ -115,7 +114,7 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
     }
 
     private void configurarVentana() {
-        this.setTitle("Casa Victoria");
+        this.setTitle("NetCom ERP");
         this.setSize(1000, 729);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
