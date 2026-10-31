@@ -241,9 +241,6 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1000, 729));
@@ -295,45 +292,24 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
 
         getContentPane().add(pnl_menu_abajo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 640, 1000, 90));
 
-        jLabel2.setFont(new java.awt.Font("Bookman Old Style", 2, 36)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Arial Black", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("VICTORIA");
+        jLabel2.setText("Y MOBLAJE COMERCIAL");
         desktopPane.add(jLabel2);
-        jLabel2.setBounds(480, 130, 180, 40);
+        jLabel2.setBounds(240, 250, 560, 40);
 
-        jLabel3.setFont(new java.awt.Font("Bookman Old Style", 2, 36)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 204, 0));
-        jLabel3.setText("CASA");
+        jLabel3.setFont(new java.awt.Font("Arial Black", 1, 36)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 153, 51));
+        jLabel3.setText("SISTEMA DE CONTROL LOGÍSTICO");
         desktopPane.add(jLabel3);
-        jLabel3.setBounds(360, 130, 100, 40);
+        jLabel3.setBounds(160, 200, 730, 40);
 
-        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("casavictoriauno@gmail.com / 2827436 / 979670222");
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/portada64.png"))); // NOI18N
+        jLabel1.setText("NetCom ERP");
         desktopPane.add(jLabel1);
-        jLabel1.setBounds(330, 280, 350, 20);
-
-        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Closet / Comodas / M. cocina");
-        desktopPane.add(jLabel4);
-        jLabel4.setBounds(370, 190, 250, 25);
-
-        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Colchones / Living / Toulette");
-        desktopPane.add(jLabel5);
-        jLabel5.setBounds(370, 220, 250, 25);
-
-        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Plumones / Sabanas / Cortinajes");
-        desktopPane.add(jLabel6);
-        jLabel6.setBounds(370, 250, 290, 25);
+        jLabel1.setBounds(780, 460, 160, 80);
 
         getContentPane().add(desktopPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 1000, 540));
 
@@ -395,9 +371,6 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel lblUsuarioLogueado;
     private javax.swing.JPanel pnl_menu_abajo;
     private javax.swing.JPanel pnl_menu_arriba;

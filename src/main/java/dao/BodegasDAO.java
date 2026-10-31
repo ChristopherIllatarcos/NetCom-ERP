@@ -13,10 +13,9 @@ public class BodegasDAO {
 
     public List<ItemCombo> listarBodegasCombo() {
         List<ItemCombo> lista = new ArrayList<>();
-        // Agregamos una opción por defecto arriba del todo usando el modelo global
         lista.add(new ItemCombo(0, "-- SELECCIONE BODEGA / SECTOR --"));
 
-        String sql = "SELECT id, nombre FROM bodegas WHERE activo = TRUE ORDER BY nombre ASC";
+        String sql = "SELECT id, nombre FROM bodegas WHERE activo = TRUE AND nombre IS NOT NULL AND TRIM(nombre) != '' ORDER BY nombre ASC";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -31,14 +30,22 @@ public class BodegasDAO {
     }
 
     public boolean guardarBodega(String nombre) {
-        // Generamos un código automático basado en el nombre o un prefijo
-        String codigoAuto = "SEC-" + System.currentTimeMillis() % 1000;
+        if (nombre == null || nombre.trim().isEmpty()) {
+            System.err.println("Error: El nombre de la bodega no puede estar vacío.");
+            return false;
+        }
+
+        // Usar timestamp completo para garantizar unicidad absoluta sin colisiones
+        String codigoAuto = "SEC-" + System.currentTimeMillis();
 
         String sql = "INSERT INTO bodegas (codigo, nombre, activo) VALUES (?, ?, TRUE)";
+
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setString(1, codigoAuto);
-            ps.setString(2, nombre);
+            ps.setString(2, nombre.trim());
             return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.err.println("Error al guardar bodega: " + e.getMessage());
             return false;
@@ -46,11 +53,19 @@ public class BodegasDAO {
     }
 
     public boolean actualizarBodega(int id, String nuevoNombre) {
+        if (id <= 0 || nuevoNombre == null || nuevoNombre.trim().isEmpty()) {
+            System.err.println("Error: El ID debe ser válido y el nuevo nombre no puede estar vacío.");
+            return false;
+        }
+
         String sql = "UPDATE bodegas SET nombre = ? WHERE id = ?";
+
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, nuevoNombre);
+
+            ps.setString(1, nuevoNombre.trim());
             ps.setInt(2, id);
             return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
             System.err.println("Error al actualizar bodega: " + e.getMessage());
             return false;
@@ -58,19 +73,29 @@ public class BodegasDAO {
     }
 
     public boolean eliminarBodega(int id) {
-        String sql = "DELETE FROM bodegas WHERE id = ?";
+        if (id <= 0) {
+            System.err.println("Error: ID de bodega inválido.");
+            return false;
+        }
+
+        // Borrado lógico (Soft Delete): Desactiva la bodega en lugar de borrarla físicamente
+        // para preservar la trazabilidad histórica de inventarios y movimientos.
+        String sql = "UPDATE bodegas SET activo = FALSE WHERE id = ?";
+
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
+
         } catch (SQLException e) {
-            System.err.println("Error al eliminar bodega (llave foránea en uso): " + e.getMessage());
+            System.err.println("Error al desactivar la bodega: " + e.getMessage());
             return false;
         }
     }
 
     public List<ItemCombo> listarBodegasComboParaEditar() {
         List<ItemCombo> lista = new ArrayList<>();
-        String sql = "SELECT id, nombre FROM bodegas WHERE activo = TRUE ORDER BY nombre ASC";
+        String sql = "SELECT id, nombre FROM bodegas WHERE activo = TRUE AND nombre IS NOT NULL AND TRIM(nombre) != '' ORDER BY nombre ASC";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -581,6 +606,7 @@ public class BodegasDAO {
 
             try (java.sql.ResultSet rs = ps.executeQuery()) {
                 class RegistroTemp {
+
                     String codigo, desc;
                     double cant, totalVta;
                 }

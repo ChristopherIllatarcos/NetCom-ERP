@@ -90,7 +90,7 @@ public class IFrmCamaraKay extends javax.swing.JInternalFrame {
         // 3. Pedir nuevos datos usando InputUtil con los valores pre-cargados
         String nuevaTecla = utilidades.InputUtil.mostrarInput(this, "Modificar Tecla", "Modificar Tecla:", teclaActual);
         if (nuevaTecla == null) {
-            return; 
+            return;
         }
 
         String nuevaAccion = utilidades.InputUtil.mostrarInput(this, "Modificar Acción", "Modificar Acción o Función:", accionActual);
@@ -132,8 +132,25 @@ public class IFrmCamaraKay extends javax.swing.JInternalFrame {
             return;
         }
 
-        // Llamamos al DAO para que guarde todo este bloque en la base de datos
-        boolean exito = dao.guardarMapeoTeclas(terminal, perfil, modelo);
+        // 1. Convertir el DefaultTableModel de la UI a una lista tipada de MapeoTecla
+        java.util.List<modelo.MapeoTecla> listaMapeos = new java.util.ArrayList<>();
+
+        for (int i = 0; i < totalFilas; i++) {
+            Object valTecla = modelo.getValueAt(i, 0);
+            Object valAccion = modelo.getValueAt(i, 1);
+            Object valProducto = modelo.getValueAt(i, 2);
+            Object valEstado = modelo.getValueAt(i, 3);
+
+            String tecla = (valTecla != null) ? valTecla.toString() : "";
+            String accion = (valAccion != null) ? valAccion.toString() : "";
+            String producto = (valProducto != null) ? valProducto.toString() : "";
+            boolean estado = (valEstado != null) && valEstado.toString().equalsIgnoreCase("Activo");
+
+            listaMapeos.add(new modelo.MapeoTecla(tecla, accion, producto, estado));
+        }
+
+        // 2. Llamar al DAO pasándole la lista limpia y desacoplada
+        boolean exito = dao.guardarMapeoTeclas(terminal, perfil, listaMapeos);
 
         if (exito) {
             utilidades.AlertaUtil.mostrarExito(this, "¡Configuración de teclas guardada correctamente!");
@@ -151,7 +168,7 @@ public class IFrmCamaraKay extends javax.swing.JInternalFrame {
         );
 
         if (nombreCaja == null || nombreCaja.trim().isEmpty()) {
-            return; 
+            return;
         }
 
         nombreCaja = nombreCaja.trim();
@@ -181,7 +198,7 @@ public class IFrmCamaraKay extends javax.swing.JInternalFrame {
         );
 
         if (nombrePerfil == null || nombrePerfil.trim().isEmpty()) {
-            return; 
+            return;
         }
 
         nombrePerfil = nombrePerfil.trim();
@@ -254,11 +271,19 @@ public class IFrmCamaraKay extends javax.swing.JInternalFrame {
         String terminal = cmbCajaTerminal.getSelectedItem() != null ? cmbCajaTerminal.getSelectedItem().toString() : "";
         String perfil = cmbPerfilTeclado.getSelectedItem() != null ? cmbPerfilTeclado.getSelectedItem().toString() : "";
 
-        List<Object[]> datos = dao.obtenerMapeoTeclas(terminal, perfil);
+        // 1. Obtenemos la lista de DTOs desde el DAO
+        java.util.List<modelo.MapeoTecla> datos = dao.obtenerMapeoTeclas(terminal, perfil);
         DefaultTableModel modelo = (DefaultTableModel) tblMapeo.getModel();
         modelo.setRowCount(0);
 
-        for (Object[] fila : datos) {
+        // 2. Recorremos los objetos y los agregamos al modelo de la JTable
+        for (modelo.MapeoTecla m : datos) {
+            Object[] fila = new Object[]{
+                m.getTecla(),
+                m.getAccion(),
+                m.getProducto(),
+                m.getEstadoStr() // Retorna "Activo" o "Inactivo"
+            };
             modelo.addRow(fila);
         }
     }

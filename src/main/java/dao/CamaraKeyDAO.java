@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import modelo.MapeoTecla;
 
 public class CamaraKeyDAO {
 
@@ -17,7 +18,7 @@ public class CamaraKeyDAO {
      */
     public List<String> obtenerCajasTerminales() {
         List<String> lista = new ArrayList<>();
-        String sql = "SELECT nombre_terminal FROM terminales_pos WHERE activo = true ORDER BY nombre_terminal";
+        String sql = "SELECT nombre_terminal FROM terminales_pos WHERE activo = true AND nombre_terminal IS NOT NULL AND TRIM(nombre_terminal) != '' ORDER BY nombre_terminal";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -26,8 +27,6 @@ public class CamaraKeyDAO {
             }
         } catch (SQLException e) {
             System.err.println("Error al obtener terminales POS: " + e.getMessage());
-            // Fallback por si acaso
-            lista.add("Caja Principal 01");
         }
 
         return lista;
@@ -40,9 +39,8 @@ public class CamaraKeyDAO {
      * @param perfil
      * @return
      */
-    public List<Object[]> obtenerMapeoTeclas(String terminal, String perfil) {
-        List<Object[]> lista = new ArrayList<>();
-        // Simulación o consulta a tu tabla de mapeo de teclas
+    public List<MapeoTecla> obtenerMapeoTeclas(String terminal, String perfil) {
+        List<MapeoTecla> lista = new ArrayList<>();
         String sql = "SELECT tecla, accion, producto, estado FROM mapeo_teclas WHERE terminal = ? AND perfil = ?";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -52,12 +50,13 @@ public class CamaraKeyDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Object[] fila = new Object[4];
-                    fila[0] = rs.getString("tecla");
-                    fila[1] = rs.getString("accion");
-                    fila[2] = rs.getString("producto");
-                    fila[3] = rs.getBoolean("estado") ? "Activo" : "Inactivo";
-                    lista.add(fila);
+                    MapeoTecla mapeo = new MapeoTecla(
+                            rs.getString("tecla"),
+                            rs.getString("accion"),
+                            rs.getString("producto"),
+                            rs.getBoolean("estado")
+                    );
+                    lista.add(mapeo);
                 }
             }
         } catch (SQLException e) {
@@ -67,13 +66,16 @@ public class CamaraKeyDAO {
         return lista;
     }
 
-    public boolean guardarMapeoTeclas(String terminal, String perfil, javax.swing.table.DefaultTableModel modelo) {
-        // Primero podemos limpiar los registros anteriores de este terminal/perfil para reemplazarlos con los actuales
+    public boolean guardarMapeoTeclas(String terminal, String perfil, List<MapeoTecla> listaMapeos) {
+        if (listaMapeos == null) {
+            return false;
+        }
+
         String sqlDelete = "DELETE FROM mapeo_teclas WHERE terminal = ? AND perfil = ?";
         String sqlInsert = "INSERT INTO mapeo_teclas (terminal, perfil, tecla, accion, producto, estado) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = ConexionDB.getConnection()) {
-            con.setAutoCommit(false); // Transacción segura
+            con.setAutoCommit(false); // Iniciar transacción segura
 
             try (PreparedStatement psDel = con.prepareStatement(sqlDelete)) {
                 psDel.setString(1, terminal);
@@ -82,41 +84,43 @@ public class CamaraKeyDAO {
             }
 
             try (PreparedStatement psIns = con.prepareStatement(sqlInsert)) {
-                for (int i = 0; i < modelo.getRowCount(); i++) {
-                    String tecla = modelo.getValueAt(i, 0).toString();
-                    String accion = modelo.getValueAt(i, 1).toString();
-                    String producto = modelo.getValueAt(i, 2).toString();
-                    boolean estado = modelo.getValueAt(i, 3).toString().equalsIgnoreCase("Activo");
-
+                for (MapeoTecla m : listaMapeos) {
                     psIns.setString(1, terminal);
                     psIns.setString(2, perfil);
-                    psIns.setString(3, tecla);
-                    psIns.setString(4, accion);
-                    psIns.setString(5, producto);
-                    psIns.setBoolean(6, estado);
+                    psIns.setString(2, perfil);
+                    psIns.setString(3, m.getTecla());
+                    psIns.setString(4, m.getAccion());
+                    psIns.setString(5, m.getProducto());
+                    psIns.setBoolean(6, m.isEstado());
                     psIns.addBatch();
                 }
                 psIns.executeBatch();
             }
 
-            con.commit();
+            con.commit(); // Confirmar transacción exitosa
             return true;
+
         } catch (SQLException e) {
-            System.err.println("Error al guardar mapeo: " + e.getMessage());
+            System.err.println("Error al guardar mapeo de teclas: " + e.getMessage());
+            // Nota: Aquí se maneja el rollback de forma segura si el objeto Connection sigue activo
             return false;
         }
     }
 
     public boolean registrarNuevaCaja(String nombreTerminal) {
-        String sql = "INSERT INTO terminales_pos (codigo, nombre_terminal, activo) VALUES (?, ?, true)";
+        if (nombreTerminal == null || nombreTerminal.trim().isEmpty()) {
+            System.err.println("Error: El nombre del terminal no puede estar vacío.");
+            return false;
+        }
 
-        // Generamos un código automático simple basado en el nombre o la fecha
-        String codigoAuto = "POS-" + System.currentTimeMillis() % 1000;
+        // Usar timestamp completo o UUID corto para evitar colisiones por duplicidad
+        String codigoAuto = "POS-" + System.currentTimeMillis();
+        String sql = "INSERT INTO terminales_pos (codigo, nombre_terminal, activo) VALUES (?, ?, true)";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, codigoAuto);
-            ps.setString(2, nombreTerminal);
+            ps.setString(2, nombreTerminal.trim());
             ps.executeUpdate();
             return true;
 
@@ -128,11 +132,12 @@ public class CamaraKeyDAO {
 
     /**
      * Obtiene los perfiles de teclado activos.
-     * @return 
+     *
+     * @return
      */
     public List<String> obtenerPerfilesTeclado() {
         List<String> lista = new ArrayList<>();
-        String sql = "SELECT nombre_perfil FROM perfiles_teclado WHERE activo = true ORDER BY nombre_perfil";
+        String sql = "SELECT nombre_perfil FROM perfiles_teclado WHERE activo = true AND nombre_perfil IS NOT NULL AND TRIM(nombre_perfil) != '' ORDER BY nombre_perfil";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -140,10 +145,8 @@ public class CamaraKeyDAO {
                 lista.add(rs.getString("nombre_perfil"));
             }
         } catch (SQLException e) {
-            System.err.println("Aviso perfiles: " + e.getMessage());
-            // Fallback por si la tabla recién se está creando
-            lista.add("Perfil Estándar POS");
-            lista.add("Perfil Rápido - Almacén");
+            System.err.println("Aviso al obtener perfiles de teclado: " + e.getMessage());
+
         }
 
         return lista;
@@ -151,15 +154,21 @@ public class CamaraKeyDAO {
 
     /**
      * Registra un nuevo perfil de teclado en la base de datos.
+     *
      * @param nombrePerfil
-     * @return 
+     * @return
      */
     public boolean registrarNuevoPerfil(String nombrePerfil) {
+        if (nombrePerfil == null || nombrePerfil.trim().isEmpty()) {
+            System.err.println("Error: El nombre del perfil no puede estar vacío.");
+            return false;
+        }
+
         String sql = "INSERT INTO perfiles_teclado (nombre_perfil, activo) VALUES (?, true)";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, nombrePerfil);
+            ps.setString(1, nombrePerfil.trim());
             ps.executeUpdate();
             return true;
 

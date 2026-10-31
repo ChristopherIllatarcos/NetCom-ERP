@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import modelo.AccesoFuncion;
 
-
 public class AccesoFuncionDAO {
 
     // 1. Obtener Roles únicos desde la tabla usuarios
@@ -23,10 +22,9 @@ public class AccesoFuncionDAO {
         return roles;
     }
 
-    // 2. Obtener Usuarios (Username) desde la tabla usuarios
     public List<String> obtenerUsuarios() {
         List<String> usuarios = new ArrayList<>();
-        String sql = "SELECT username FROM usuarios ORDER BY username";
+        String sql = "SELECT username FROM usuarios WHERE username IS NOT NULL AND TRIM(username) != '' ORDER BY username";
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 usuarios.add(rs.getString("username"));
@@ -67,30 +65,40 @@ public class AccesoFuncionDAO {
 
     // 4. Guardar / Actualizar lista masiva de permisos
     public boolean guardarPermisos(List<AccesoFuncion> listaPermisos) {
+        if (listaPermisos == null || listaPermisos.isEmpty()) {
+            return true; // Nada que guardar
+        }
+
         String sql = "INSERT INTO accesos_funciones (tipo_asignacion, referencia, modulo, codigo_funcion, nombre_funcion, permitido) "
                 + "VALUES (?, ?, ?, ?, ?, ?) "
                 + "ON CONFLICT (tipo_asignacion, referencia, codigo_funcion) "
                 + "DO UPDATE SET permitido = EXCLUDED.permitido";
 
-        try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexionDB.getConnection()) {
+            con.setAutoCommit(false); // Iniciar transacción
 
-            con.setAutoCommit(false); // Transacción para mayor rapidez y seguridad
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                for (AccesoFuncion af : listaPermisos) {
+                    ps.setString(1, af.getTipoAsignacion());
+                    ps.setString(2, af.getReferencia());
+                    ps.setString(3, af.getModulo());
+                    ps.setString(4, af.getCodigoFuncion());
+                    ps.setString(5, af.getNombreFuncion());
+                    ps.setBoolean(6, af.isPermitido());
+                    ps.addBatch();
+                }
 
-            for (AccesoFuncion af : listaPermisos) {
-                ps.setString(1, af.getTipoAsignacion());
-                ps.setString(2, af.getReferencia());
-                ps.setString(3, af.getModulo());
-                ps.setString(4, af.getCodigoFuncion());
-                ps.setString(5, af.getNombreFuncion());
-                ps.setBoolean(6, af.isPermitido());
-                ps.addBatch();
+                ps.executeBatch();
+                con.commit(); // Confirmar transacción
+                return true;
+
+            } catch (SQLException e) {
+                con.rollback(); // Revertir cambios si algo falla
+                System.err.println("Error al guardar permisos (Rollback ejecutado): " + e.getMessage());
+                return false;
             }
-
-            ps.executeBatch();
-            con.commit();
-            return true;
         } catch (SQLException e) {
-            System.err.println("Error al guardar permisos: " + e.getMessage());
+            System.err.println("Error de conexión al guardar permisos: " + e.getMessage());
             return false;
         }
     }

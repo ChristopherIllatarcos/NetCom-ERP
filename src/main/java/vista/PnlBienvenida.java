@@ -21,56 +21,55 @@ public class PnlBienvenida extends javax.swing.JPanel {
         String textoFecha = fechaActual.format(formato).toUpperCase();
 
         try {
-            // 2. Título Principal "Casa Victoria" 
-            JLabel lblLogoTitulo = new JLabel("<html><font color='#003366'>Casa</font><font color='#D4AF37'>Victoria</font></html>");
-            lblLogoTitulo.setFont(new java.awt.Font("Century Gothic", java.awt.Font.BOLD, 56));
+            // 2. Título Principal "NetCom ERP" con identidad corporativa
+            JLabel lblLogoTitulo = new JLabel("<html><font color='#1F4E78'>NetCom</font>&nbsp;<font color='#D4AF37'>ERP</font></html>");
+            lblLogoTitulo.setFont(new java.awt.Font("Century Gothic", java.awt.Font.BOLD, 52));
             lblLogoTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 
-            // 3. Subtítulo con la Fecha Automática bien posicionada
-            JLabel lblSubFecha = new JLabel(textoFecha);
-            lblSubFecha.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
-            lblSubFecha.setForeground(new java.awt.Color(120, 120, 120)); // Gris elegante
+            // 3. Subtítulo con el eslogan oficial del sistema
+            JLabel lblSubFecha = new JLabel("SISTEMA DE CONTROL LOGÍSTICO Y MOBLAJE COMERCIAL");
+            lblSubFecha.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+            lblSubFecha.setForeground(new java.awt.Color(100, 110, 120)); // Gris corporativo elegante
             lblSubFecha.setHorizontalAlignment(SwingConstants.CENTER);
 
-            // 4. Listado de rubros/productos
+            // 4. Listado de rubros y módulos de negocio (Home & Office / B2B)
             JLabel lblListadoProductos = new JLabel(
                     "<html><center><font color='#555555'>"
-                    + "CLOSET &nbsp;|&nbsp; CÓMODAS &nbsp;|&nbsp; M. COCINA &nbsp;|&nbsp; COLCHONES<br>"
-                    + "LIVING &nbsp;|&nbsp; TOILETTE &nbsp;|&nbsp; PLUMONES &nbsp;|&nbsp; SÁBANAS &nbsp;|&nbsp; CORTINAJES"
+                    + "MOBNAJE CORPORATIVO &nbsp;|&nbsp; ESTACIONES DE TRABAJO &nbsp;|&nbsp; SISTEMAS DE ALMACENAJE<br>"
+                    + "CONTROL DE INVENTARIO &nbsp;|&nbsp; LOGÍSTICA &nbsp;|&nbsp; DISTRIBUCIÓN COMERCIAL"
                     + "</font></center></html>"
             );
-            lblListadoProductos.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 15));
+            lblListadoProductos.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
             lblListadoProductos.setHorizontalAlignment(SwingConstants.CENTER);
 
-            // 5. Datos de Contacto Inferiores
+            // 5. Datos de Soporte / Contacto Corporativo
             JLabel lblContacto = new JLabel(
                     "<html><center><font color='#777777'>"
-                    + "✉ casavictoriauno@gmail.com &nbsp;&nbsp;&nbsp;&nbsp; 📞 2827436 &nbsp;&nbsp;&nbsp;&nbsp; 📱 979670222"
+                    + "✉ cillatarcosc@gmail.com &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 📱 Móvil Comercial: +56 9 2623 1939"
                     + "</font></center></html>"
             );
-            lblContacto.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
+            lblContacto.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
             lblContacto.setHorizontalAlignment(SwingConstants.CENTER);
 
-           
             int anchoEspacioBlanco = 800;
-            int margenX = -60; // ¡Número negativo! Esto obliga al AbsoluteLayout a arrastrar el texto hacia la izquierda de la pantalla
+            int margenX = -60; // Mantiene el posicionamiento con AbsoluteLayout hacia la izquierda
 
-            this.add(lblLogoTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(margenX, 140, anchoEspacioBlanco, 65));
-            this.add(lblSubFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(margenX, 215, anchoEspacioBlanco, 25));
-            this.add(lblListadoProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(margenX, 270, anchoEspacioBlanco, 55));
+            this.add(lblLogoTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(margenX, 130, anchoEspacioBlanco, 65));
+            this.add(lblSubFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(margenX, 205, anchoEspacioBlanco, 25));
+            this.add(lblListadoProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(margenX, 260, anchoEspacioBlanco, 55));
             this.add(lblContacto, new org.netbeans.lib.awtextra.AbsoluteConstraints(margenX, 350, anchoEspacioBlanco, 30));
 
         } catch (Exception e) {
-            System.out.println("Error alineando el logo: " + e.getMessage());
+            System.out.println("Error alineando el banner principal: " + e.getMessage());
         }
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
+        /**
+         * This method is called from within the constructor to initialize the
+         * form. WARNING: Do NOT modify this code. The content of this method is
+         * always regenerated by the Form Editor.
+         */
+        @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
