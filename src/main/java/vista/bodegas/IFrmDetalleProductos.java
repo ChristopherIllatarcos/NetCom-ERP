@@ -150,11 +150,20 @@ public class IFrmDetalleProductos extends javax.swing.JInternalFrame {
         tblDetalleHistorial.setModel(modeloHistorial);
         modeloHistorial.setRowCount(0);
 
-        // Llamada limpia al DAO
+        // Llamada limpia al DAO recibiendo la lista de DTOs fuertemente tipados
         dao.BodegasDAO bodegasDao = new dao.BodegasDAO();
-        java.util.List<Object[]> lista = bodegasDao.listarIngresosParaHistorial();
+        java.util.List<modelo.HistorialIngresoDTO> lista = bodegasDao.listarIngresosParaHistorial();
 
-        for (Object[] fila : lista) {
+        for (modelo.HistorialIngresoDTO item : lista) {
+            Object[] fila = new Object[]{
+                item.getId(),
+                item.getNumeroFactura(),
+                item.getFechaEmision(),
+                item.getDescripciones(),
+                item.getCantidadTotal(),
+                item.getSubtotal(),
+                item.getObservaciones()
+            };
             modeloHistorial.addRow(fila);
         }
 

@@ -114,7 +114,11 @@ public class BodegasDAO {
             int tipoMotivoId,
             java.util.Date fechaIngreso,
             String observacion,
-            javax.swing.table.DefaultTableModel modeloDetalle) {
+            java.util.List<modelo.DetalleIngresoDTO> listaDetalle) {
+
+        if (listaDetalle == null || listaDetalle.isEmpty()) {
+            return false;
+        }
 
         String sqlCompra = "INSERT INTO compras (numero_factura, tipo, fecha_emision, proveedor_id, subtotal, iva, total, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlDetalle = "INSERT INTO detalle_compras (compra_id, producto_id, cantidad, precio_unitario, subtotal, codigo_producto, descripcion, costo_unitario) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -122,20 +126,21 @@ public class BodegasDAO {
         String sqlMovimiento = "INSERT INTO movimientos_stock (producto_id, tipo_movimiento, origen_id, cantidad, saldo_anterior, saldo_nuevo, observaciones) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = ConexionDB.getConnection()) {
-            con.setAutoCommit(false); // Transacción segura
+            con.setAutoCommit(false); // Inicio de transacción segura
 
             double totalGral = 0.0;
-            int filas = modeloDetalle.getRowCount();
-            for (int i = 0; i < filas; i++) {
-                totalGral += Double.parseDouble(modeloDetalle.getValueAt(i, 4).toString().replace(",", "."));
+            for (modelo.DetalleIngresoDTO item : listaDetalle) {
+                totalGral += item.getSubtotal();
             }
 
             long compraIdGenerado = 0;
+
+            // 1. Insertar Cabecera de Compra
             try (PreparedStatement psCompra = con.prepareStatement(sqlCompra, PreparedStatement.RETURN_GENERATED_KEYS)) {
                 psCompra.setString(1, folio);
                 psCompra.setString(2, "INGRESO BODEGA");
                 psCompra.setDate(3, new java.sql.Date(fechaIngreso.getTime()));
-                psCompra.setInt(4, 1);
+                psCompra.setInt(4, 1); // Proveedor por defecto o configurable
                 psCompra.setDouble(5, totalGral);
                 psCompra.setDouble(6, 0.0);
                 psCompra.setDouble(7, totalGral);
@@ -150,59 +155,62 @@ public class BodegasDAO {
             }
 
             ProductosDAO prodDao = new ProductosDAO();
-            for (int i = 0; i < filas; i++) {
-                String codigo = modeloDetalle.getValueAt(i, 0).toString();
-                String descripcion = modeloDetalle.getValueAt(i, 1).toString();
-                int cantidad = Integer.parseInt(modeloDetalle.getValueAt(i, 2).toString());
-                double costoUnit = Double.parseDouble(modeloDetalle.getValueAt(i, 3).toString().replace(",", "."));
-                double subtotal = Double.parseDouble(modeloDetalle.getValueAt(i, 4).toString().replace(",", "."));
 
-                int productoId = prodDao.obtenerIdPorCodigo(codigo);
-                modelo.Producto prodObj = prodDao.buscarProductoBodega(codigo);
-                double stockAnterior = (prodObj != null) ? prodObj.getStockActual() : 0.0;
-                double stockNuevo = stockAnterior + cantidad;
+            // 2. Preparar operaciones por lotes para el detalle, stock y movimientos
+            try (PreparedStatement psDet = con.prepareStatement(sqlDetalle); PreparedStatement psStk = con.prepareStatement(sqlStock); PreparedStatement psMov = con.prepareStatement(sqlMovimiento)) {
 
-                try (PreparedStatement psDet = con.prepareStatement(sqlDetalle)) {
+                for (modelo.DetalleIngresoDTO item : listaDetalle) {
+                    // Consultas de apoyo usando la misma lógica de negocio
+                    int productoId = prodDao.obtenerIdPorCodigo(item.getCodigo());
+                    modelo.Producto prodObj = prodDao.buscarProductoBodega(item.getCodigo());
+                    double stockAnterior = (prodObj != null) ? prodObj.getStockActual() : 0.0;
+                    double stockNuevo = stockAnterior + item.getCantidad();
+
+                    // Parametrizar Detalle
                     psDet.setLong(1, compraIdGenerado);
                     psDet.setInt(2, productoId);
-                    psDet.setInt(3, cantidad);
-                    psDet.setDouble(4, costoUnit);
-                    psDet.setDouble(5, subtotal);
-                    psDet.setString(6, codigo);
-                    psDet.setString(7, descripcion);
-                    psDet.setDouble(8, costoUnit);
-                    psDet.executeUpdate();
-                }
+                    psDet.setInt(3, item.getCantidad());
+                    psDet.setDouble(4, item.getCostoUnitario());
+                    psDet.setDouble(5, item.getSubtotal());
+                    psDet.setString(6, item.getCodigo());
+                    psDet.setString(7, item.getDescripcion());
+                    psDet.setDouble(8, item.getCostoUnitario());
+                    psDet.addBatch();
 
-                try (PreparedStatement psStk = con.prepareStatement(sqlStock)) {
-                    psStk.setInt(1, cantidad);
+                    // Parametrizar Stock
+                    psStk.setInt(1, item.getCantidad());
                     psStk.setInt(2, productoId);
-                    psStk.executeUpdate();
-                }
+                    psStk.addBatch();
 
-                try (PreparedStatement psMov = con.prepareStatement(sqlMovimiento)) {
+                    // Parametrizar Movimiento de Kardex
                     psMov.setInt(1, productoId);
                     psMov.setString(2, "ENTRADA");
                     psMov.setInt(3, (int) compraIdGenerado);
-                    psMov.setInt(4, cantidad);
+                    psMov.setInt(4, item.getCantidad());
                     psMov.setDouble(5, stockAnterior);
                     psMov.setDouble(6, stockNuevo);
                     psMov.setString(7, "Ingreso de mercadería - Folio: " + folio);
-                    psMov.executeUpdate();
+                    psMov.addBatch();
                 }
+
+                // Ejecutar lotes masivos
+                psDet.executeBatch();
+                psStk.executeBatch();
+                psMov.executeBatch();
             }
 
-            con.commit();
+            con.commit(); // Confirmar transacción completa
             return true;
 
         } catch (SQLException e) {
             System.err.println("Error crítico en transacción de ingreso de bodega: " + e.getMessage());
+            // TODO: Agregar con.rollback() seguro si la conexión sigue abierta
             return false;
         }
     }
 
-    public java.util.List<Object[]> listarIngresosParaHistorial() {
-        java.util.List<Object[]> lista = new java.util.ArrayList<>();
+    public java.util.List<modelo.HistorialIngresoDTO> listarIngresosParaHistorial() {
+        java.util.List<modelo.HistorialIngresoDTO> lista = new java.util.ArrayList<>();
         String sql = "SELECT c.id, c.numero_factura, c.fecha_emision, "
                 + "STRING_AGG(d.descripcion, ', ') AS descripciones, "
                 + "SUM(d.cantidad) AS cantidad_total, "
@@ -215,23 +223,29 @@ public class BodegasDAO {
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Object[] fila = new Object[7];
-                fila[0] = rs.getInt("id");
-                fila[1] = rs.getString("numero_factura");
-                fila[2] = rs.getDate("fecha_emision");
-                fila[3] = rs.getString("descripciones");
-                fila[4] = rs.getInt("cantidad_total");
-                fila[5] = rs.getDouble("subtotal");
-                fila[6] = rs.getString("observaciones");
-                lista.add(fila);
+                modelo.HistorialIngresoDTO dto = new modelo.HistorialIngresoDTO(
+                        rs.getInt("id"),
+                        rs.getString("numero_factura"),
+                        rs.getDate("fecha_emision"),
+                        rs.getString("descripciones"),
+                        rs.getInt("cantidad_total"),
+                        rs.getDouble("subtotal"),
+                        rs.getString("observaciones")
+                );
+                lista.add(dto);
             }
         } catch (SQLException e) {
-            System.err.println("Error al listar historial: " + e.getMessage());
+            System.err.println("Error al listar historial de ingresos: " + e.getMessage());
         }
         return lista;
     }
 
     public boolean actualizarIngresoCabecera(int idCompra, String nuevoFolio, java.util.Date nuevaFecha) {
+        if (nuevaFecha == null) {
+            System.err.println("Error: La fecha de emisión no puede ser nula.");
+            return false;
+        }
+
         String sql = "UPDATE compras SET numero_factura = ?, fecha_emision = ? WHERE id = ?";
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nuevoFolio);
@@ -263,13 +277,22 @@ public class BodegasDAO {
     }
 
     public boolean actualizarIngresoCompleto(int idCompra, String nuevoFolio, java.util.Date nuevaFecha, String nuevaObservacion, String nuevaDescripcion, int nuevaCantidad, double nuevoCosto) {
+        // Blindaje defensivo contra nulos
+        if (nuevaFecha == null) {
+            System.err.println("Error de validación: La fecha de emisión no puede ser nula.");
+            return false;
+        }
+
         String sqlCompra = "UPDATE compras SET numero_factura = ?, fecha_emision = ?, observaciones = ? WHERE id = ?";
         String sqlSubtotalDetalle = "UPDATE detalle_compras SET descripcion = ?, cantidad = ?, costo_unitario = ?, precio_unitario = ?, subtotal = ? WHERE compra_id = ?";
         double nuevoSubtotal = nuevaCantidad * nuevoCosto;
 
-        try (Connection con = ConexionDB.getConnection()) {
-            con.setAutoCommit(false);
+        Connection con = null;
+        try {
+            con = ConexionDB.getConnection();
+            con.setAutoCommit(false); // Iniciamos la transacción manual (ACID)
 
+            // 1. Actualizar la cabecera de la compra
             try (PreparedStatement psComp = con.prepareStatement(sqlCompra)) {
                 psComp.setString(1, nuevoFolio);
                 psComp.setDate(2, new java.sql.Date(nuevaFecha.getTime()));
@@ -278,6 +301,7 @@ public class BodegasDAO {
                 psComp.executeUpdate();
             }
 
+            // 2. Actualizar el detalle de la compra
             try (PreparedStatement psDet = con.prepareStatement(sqlSubtotalDetalle)) {
                 psDet.setString(1, nuevaDescripcion);
                 psDet.setInt(2, nuevaCantidad);
@@ -288,11 +312,31 @@ public class BodegasDAO {
                 psDet.executeUpdate();
             }
 
-            con.commit();
+            con.commit(); // Si todo salió bien, confirmamos los cambios
             return true;
+
         } catch (SQLException e) {
+            // Si ocurre cualquier error, revertimos la transacción para mantener la consistencia
+            if (con != null) {
+                try {
+                    con.rollback();
+                    System.err.println("Transacción revertida exitosamente (Rollback aplicado).");
+                } catch (SQLException rollbackEx) {
+                    System.err.println("Error crítico al intentar hacer rollback: " + rollbackEx.getMessage());
+                }
+            }
             System.err.println("Error al actualizar ingreso completo: " + e.getMessage());
             return false;
+        } finally {
+            // Nos aseguramos de cerrar la conexión de forma segura en el bloque finally
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true); // Restauramos el estado por defecto
+                    con.close();
+                } catch (SQLException closeEx) {
+                    System.err.println("Error al cerrar la conexión: " + closeEx.getMessage());
+                }
+            }
         }
     }
 
@@ -440,13 +484,17 @@ public class BodegasDAO {
     public java.util.List<Object[]> obtenerInventario(java.util.Date fechaAlCorte, String familiaSeleccionada, boolean verConCero) {
         java.util.List<Object[]> listaInventario = new java.util.ArrayList<>();
 
+        // Blindaje defensivo del parámetro de familia
+        String familiaFiltro = (familiaSeleccionada == null || familiaSeleccionada.trim().isEmpty()) ? "TODAS LAS FAMILIAS" : familiaSeleccionada.trim();
+
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT p.codigo, p.nombre AS descripcion, f.nombre AS familia, p.stock_actual AS stock, p.precio_compra AS costo ");
         sql.append("FROM productos p ");
         sql.append("LEFT JOIN familias f ON p.familia_id = f.id ");
         sql.append("WHERE p.activo = true ");
 
-        if (familiaSeleccionada != null && !familiaSeleccionada.equals("TODAS LAS FAMILIAS")) {
+        boolean filtrarFamilia = !familiaFiltro.equals("TODAS LAS FAMILIAS");
+        if (filtrarFamilia) {
             sql.append("AND f.nombre = ? ");
         }
 
@@ -458,17 +506,18 @@ public class BodegasDAO {
 
         try (java.sql.Connection con = conexion.ConexionDB.getConnection(); java.sql.PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
-            int index = 1;
-            if (familiaSeleccionada != null && !familiaSeleccionada.equals("TODAS LAS FAMILIAS")) {
-                ps.setString(index++, familiaSeleccionada);
+            if (filtrarFamilia) {
+                ps.setString(1, familiaFiltro);
             }
 
             try (java.sql.ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String codigo = rs.getString("codigo");
                     String descripcion = rs.getString("descripcion");
+
+                    // Manejo seguro de nulos para la familia
                     String familia = rs.getString("familia");
-                    if (familia == null) {
+                    if (familia == null || familia.trim().isEmpty()) {
                         familia = "GENERAL";
                     }
 
@@ -477,8 +526,8 @@ public class BodegasDAO {
                     double totalValorizado = stock * costo;
 
                     Object[] fila = new Object[6];
-                    fila[0] = codigo;
-                    fila[1] = descripcion;
+                    fila[0] = (codigo != null) ? codigo : "S/C";
+                    fila[1] = (descripcion != null) ? descripcion : "Sin descripción";
                     fila[2] = familia;
                     fila[3] = stock;
                     fila[4] = costo;
@@ -488,7 +537,7 @@ public class BodegasDAO {
                 }
             }
         } catch (java.sql.SQLException e) {
-            System.err.println("Error al consultar el inventario: " + e.getMessage());
+            System.err.println("Error crítico al consultar el inventario: " + e.getMessage());
         }
 
         return listaInventario;

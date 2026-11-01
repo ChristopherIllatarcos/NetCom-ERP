@@ -124,7 +124,7 @@ public class IFrmIngresoMercaderia extends javax.swing.JInternalFrame {
         }
 
         if (jDateChooserFechaIngreso.getDate() == null) {
-            utilidades.AlertaUtil.mostrarAdvertencia(this, "Debe agregar al menos un producto al detalle del ingreso.");
+            utilidades.AlertaUtil.mostrarAdvertencia(this, "Debe seleccionar una fecha de ingreso válida.");
             return;
         }
 
@@ -133,17 +133,54 @@ public class IFrmIngresoMercaderia extends javax.swing.JInternalFrame {
         java.util.Date fecha = jDateChooserFechaIngreso.getDate();
 
         // Obtenemos el item seleccionado del combo de motivos
-        modelo.ItemCombo motivoSeleccionado
-                = (modelo.ItemCombo) cmbTipoMotivo.getSelectedItem();
+        modelo.ItemCombo motivoSeleccionado = (modelo.ItemCombo) cmbTipoMotivo.getSelectedItem();
         int tipoMotivoId = (motivoSeleccionado != null) ? motivoSeleccionado.getId() : 1;
 
-        // Invocamos al DAO de bodegas de manera limpia y profesional
+        // 1. Convertir el DefaultTableModel de la UI a una lista tipada de DetalleIngresoDTO
+        java.util.List<modelo.DetalleIngresoDTO> listaDetalle = new java.util.ArrayList<>();
+        int totalFilas = modeloTablaDetalle.getRowCount();
+
+        for (int i = 0; i < totalFilas; i++) {
+            Object valCodigo = modeloTablaDetalle.getValueAt(i, 0);
+            Object valDesc = modeloTablaDetalle.getValueAt(i, 1);
+            Object valCant = modeloTablaDetalle.getValueAt(i, 2);
+            Object valCosto = modeloTablaDetalle.getValueAt(i, 3);
+            Object valSub = modeloTablaDetalle.getValueAt(i, 4);
+
+            String codigo = (valCodigo != null) ? valCodigo.toString() : "";
+            String descripcion = (valDesc != null) ? valDesc.toString() : "";
+
+            int cantidad = 0;
+            try {
+                cantidad = (valCant != null) ? Integer.parseInt(valCant.toString().trim()) : 0;
+            } catch (NumberFormatException e) {
+                cantidad = 0;
+            }
+
+            double costoUnitario = 0.0;
+            try {
+                costoUnitario = (valCosto != null) ? Double.parseDouble(valCosto.toString().replace(",", ".").trim()) : 0.0;
+            } catch (NumberFormatException e) {
+                costoUnitario = 0.0;
+            }
+
+            double subtotal = 0.0;
+            try {
+                subtotal = (valSub != null) ? Double.parseDouble(valSub.toString().replace(",", ".").trim()) : 0.0;
+            } catch (NumberFormatException e) {
+                subtotal = 0.0;
+            }
+
+            listaDetalle.add(new modelo.DetalleIngresoDTO(codigo, descripcion, cantidad, costoUnitario, subtotal));
+        }
+
+        // 2. Invocamos al DAO de bodegas pasándole la lista limpia y desacoplada
         dao.BodegasDAO bodegasDao = new dao.BodegasDAO();
-        boolean exito = bodegasDao.registrarIngresoMercaderia(folio, tipoMotivoId, fecha, observacion, modeloTablaDetalle);
+        boolean exito = bodegasDao.registrarIngresoMercaderia(folio, tipoMotivoId, fecha, observacion, listaDetalle);
 
         if (exito) {
             utilidades.AlertaUtil.mostrarExito(this, "¡Ingreso de mercadería registrado y stock actualizado con éxito!");
-
+            // Opcional: limpiar la tabla o cerrar la ventana si lo deseas
         } else {
             utilidades.AlertaUtil.mostrarError(this, "Error al registrar el ingreso en la base de datos.");
         }

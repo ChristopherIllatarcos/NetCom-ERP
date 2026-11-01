@@ -1,7 +1,7 @@
 package vista.menu;
 
-import java.awt.Component;
 import java.beans.PropertyVetoException;
+import javax.swing.SwingUtilities;
 import vista.FrmMenuPrincipal;
 
 /**
@@ -19,113 +19,56 @@ public class IFrmCtaCte extends javax.swing.JInternalFrame {
         configurarVentana();
     }
 
-    private void botonFecha() {
+    // Método auxiliar privado para ubicar el desktopPane del menú principal de forma segura
+    private void abrirVentanaInterna(javax.swing.JInternalFrame frameNueva) {
         try {
-            // 1. Instanciamos la nueva ventana cartola cliente por fecha
-            vista.ctacte.IFrmCartolaClienteFecha framectacte = new vista.ctacte.IFrmCartolaClienteFecha();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(framectacte);
-
-            // 3. La hacemos visible y la mandamos al frente
-            framectacte.setVisible(true);
-            framectacte.setSelected(true);
-            this.dispose();
-
+            javax.swing.JFrame ventanaPrincipal = (javax.swing.JFrame) SwingUtilities.getWindowAncestor(this);
+            
+            if (ventanaPrincipal instanceof FrmMenuPrincipal menu) {
+                menu.getDesktopPane().add(frameNueva);
+                frameNueva.setVisible(true);
+                frameNueva.setSelected(true);
+                this.dispose(); // Cierra el menú desplegable actual
+            }
         } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir cartola por cliente por fecha: " + e.getMessage());
+            System.out.println("Error al enfocar la ventana interna: " + e.getMessage());
         }
+    }
+
+    private void botonFecha() {
+        vista.ctacte.IFrmCartolaClienteFecha framectacte = new vista.ctacte.IFrmCartolaClienteFecha();
+        abrirVentanaInterna(framectacte);
     }
 
     private void botonCobros() {
-        try {
-            // 1. Instanciamos la nueva ventana cartola cliente por fecha
-            vista.ctacte.IFrmCuentasXCobrar framectacte = new vista.ctacte.IFrmCuentasXCobrar();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(framectacte);
-
-            // 3. La hacemos visible y la mandamos al frente
-            framectacte.setVisible(true);
-            framectacte.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir cuentas por cobrar: " + e.getMessage());
-        }
+        vista.ctacte.IFrmCuentasXCobrar framectacte = new vista.ctacte.IFrmCuentasXCobrar();
+        abrirVentanaInterna(framectacte);
     }
 
     private void botonEliminarPago() {
-        try {
-            // 1. Instanciamos la nueva ventana cartola cliente por fecha
-            vista.ctacte.IFrmEliminarPagoCliente frame = new vista.ctacte.IFrmEliminarPagoCliente();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frame);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Eliminar pago: " + e.getMessage());
-        }
+        vista.ctacte.IFrmEliminarPagoCliente frame = new vista.ctacte.IFrmEliminarPagoCliente();
+        abrirVentanaInterna(frame);
     }
 
     private void botonListaDoc() {
-        try {
-            // 1. Instanciamos la nueva ventana cartola cliente por fecha
-            vista.ctacte.IFrmDocumentosEnCartera frame = new vista.ctacte.IFrmDocumentosEnCartera();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frame);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Listado de Documentos: " + e.getMessage());
-        }
+        vista.ctacte.IFrmDocumentosEnCartera frame = new vista.ctacte.IFrmDocumentosEnCartera();
+        abrirVentanaInterna(frame);
     }
 
     private void botonEstadistico() {
-        try {
-            // 1. Instanciamos la nueva ventana cartola cliente por fecha
-            vista.ctacte.IFrmEstadisticoCliente frame = new vista.ctacte.IFrmEstadisticoCliente();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frame);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Estadístico de Clientes: " + e.getMessage());
-        }
+        vista.ctacte.IFrmEstadisticoCliente frame = new vista.ctacte.IFrmEstadisticoCliente();
+        abrirVentanaInterna(frame);
     }
 
     private void botonCartola() {
-        try {
-            // 1. Instanciamos la nueva ventana cartola cliente por fecha
-            vista.ctacte.IFrmCartolaClientePorVentas frame = new vista.ctacte.IFrmCartolaClientePorVentas();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frame);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Cartola por Ventas: " + e.getMessage());
-        }
+        vista.ctacte.IFrmCartolaClientePorVentas frame = new vista.ctacte.IFrmCartolaClientePorVentas();
+        abrirVentanaInterna(frame);
     }
 
     private void configurarVentana() {
         this.setTitle("CTACTE CLIENTE");
         this.setSize(560, 394);
         this.setResizable(false);
-
     }
 
     private void utilidades() {

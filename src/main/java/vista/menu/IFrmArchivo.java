@@ -1,6 +1,7 @@
 package vista.menu;
 
 import java.beans.PropertyVetoException;
+import javax.swing.SwingUtilities;
 import vista.FrmMenuPrincipal;
 import vista.archivos.DfrmCerrarSesion;
 import utilidades.SesionUsuario;
@@ -18,58 +19,58 @@ public class IFrmArchivo extends javax.swing.JInternalFrame {
         initComponents();
         utilidades();
         configurarVentana();
+    }
 
+    // Método auxiliar privado para ubicar el desktopPane del menú principal de forma segura
+    private void abrirVentanaInterna(javax.swing.JInternalFrame frameNueva) {
+        try {
+            javax.swing.JFrame ventanaPrincipal = (javax.swing.JFrame) SwingUtilities.getWindowAncestor(this);
+            
+            if (ventanaPrincipal instanceof FrmMenuPrincipal menu) {
+                menu.getDesktopPane().add(frameNueva);
+                frameNueva.setVisible(true);
+                frameNueva.setSelected(true);
+                this.dispose(); // Cierra el menú desplegable actual
+            }
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al enfocar la ventana interna: " + e.getMessage());
+        }
     }
 
     private void botonUsuariosSistema() {
         // 1. Validamos si el usuario actual tiene privilegios de Administrador
         if (SesionUsuario.rolActual != null && SesionUsuario.rolActual.equalsIgnoreCase("Administrador")) {
-
-            
-            try {
-                vista.archivos.IFrmUsuarios frame = new vista.archivos.IFrmUsuarios();
-                FrmMenuPrincipal.desktopPane.add(frame);
-                frame.setVisible(true);
-                frame.setSelected(true);
-                this.dispose(); // Cierra el menú desplegable de iconos
-            } catch (PropertyVetoException e) {
-                System.out.println("Error al abrir Usuarios del Sistemas: " + e.getMessage());
-            }
-
+            vista.archivos.IFrmUsuarios frame = new vista.archivos.IFrmUsuarios();
+            abrirVentanaInterna(frame);
         } else {
-            //NO TIENE PRIVILEGIOS: Lanzamos la alerta estilo SweetAlert ---
+            // NO TIENE PRIVILEGIOS: Lanzamos la alerta estilo SweetAlert ---
             mostrarAlertaSinPrivilegios();
         }
     }
 
     private void mostrarAlertaSinPrivilegios() {
-       
         javax.swing.JDialog dialogo = new javax.swing.JDialog((javax.swing.JFrame) null, "Acceso Denegado", true);
-        dialogo.setUndecorated(true); // Le quitamos los bordes estándar de la ventana
+        dialogo.setUndecorated(true); 
         dialogo.setSize(420, 190);
-        dialogo.setLocationRelativeTo(this); // Se centra respecto a tu menú principal
+        dialogo.setLocationRelativeTo(this); 
 
-        // Panel principal con fondo blanco y borde sutil rojo
         javax.swing.JPanel panel = new javax.swing.JPanel();
         panel.setBackground(java.awt.Color.WHITE);
         panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(220, 53, 69), 2));
         panel.setLayout(null);
 
-        // Etiqueta de Título
         javax.swing.JLabel lblTitulo = new javax.swing.JLabel("¡Acceso Restringido!");
         lblTitulo.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 16));
         lblTitulo.setForeground(new java.awt.Color(220, 53, 69));
         lblTitulo.setBounds(30, 25, 360, 25);
         panel.add(lblTitulo);
 
-        // Etiqueta de Mensaje descriptivo
         javax.swing.JLabel lblMensaje = new javax.swing.JLabel("<html>Usted no tiene privilegios de Administrador para entrar al módulo de Usuarios del Sistema.</html>");
         lblMensaje.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 13));
         lblMensaje.setForeground(new java.awt.Color(100, 100, 100));
         lblMensaje.setBounds(30, 60, 360, 45);
         panel.add(lblMensaje);
 
-        // Botón Aceptar con estilo moderno
         javax.swing.JButton btnAceptar = new javax.swing.JButton("Entendido");
         btnAceptar.setBounds(150, 125, 120, 35);
         btnAceptar.setBackground(new java.awt.Color(220, 53, 69));
@@ -77,7 +78,6 @@ public class IFrmArchivo extends javax.swing.JInternalFrame {
         btnAceptar.setFocusPainted(false);
         btnAceptar.setBorder(null);
 
-        // Acción del botón para cerrar la alerta al hacer clic
         btnAceptar.addActionListener(e -> dialogo.dispose());
         panel.add(btnAceptar);
 
@@ -86,98 +86,50 @@ public class IFrmArchivo extends javax.swing.JInternalFrame {
     }
 
     private void botonIndexar() {
-        try {
-            vista.archivos.IFrmIndexacion frame = new vista.archivos.IFrmIndexacion();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Indexación a la base de datos: " + e.getMessage());
-        }
+        vista.archivos.IFrmIndexacion frame = new vista.archivos.IFrmIndexacion();
+        abrirVentanaInterna(frame);
     }
 
     private void botonFinalizar() {
-        // 1. Obtener la referencia de la ventana principal 
         java.awt.Frame parentFrame = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
         String usuarioActual = "Administrador"; 
         String horaInicio = "23/10/2026 19:30";
 
-        // 3. Cerrar/ocultar la ventana actual del Menú Archivo
         this.dispose();
 
-        // 4. Crear el JDialog pasándole los 4 parámetros correctos
         DfrmCerrarSesion dialog = new DfrmCerrarSesion(parentFrame, true, usuarioActual, horaInicio);
-
-        // 5. Mostrar el diálogo modal centrado
         dialog.setVisible(true);
     }
 
     private void botonFoliador() {
-        try {
-            vista.archivos.IFrmFoliadorHojas frame = new vista.archivos.IFrmFoliadorHojas();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Foliador de Hojas: " + e.getMessage());
-        }
+        vista.archivos.IFrmFoliadorHojas frame = new vista.archivos.IFrmFoliadorHojas();
+        abrirVentanaInterna(frame);
     }
 
     private void botonCamara() {
-        try {
-            vista.archivos.IFrmCamaraKay frame = new vista.archivos.IFrmCamaraKay();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Camara Key: " + e.getMessage());
-        }
+        vista.archivos.IFrmCamaraKay frame = new vista.archivos.IFrmCamaraKay();
+        abrirVentanaInterna(frame);
     }
 
     private void botonParametros() {
-        try {
-            vista.archivos.IFrmParametrosCorrelativos frame = new vista.archivos.IFrmParametrosCorrelativos();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Parametros y Correlativos: " + e.getMessage());
-        }
+        vista.archivos.IFrmParametrosCorrelativos frame = new vista.archivos.IFrmParametrosCorrelativos();
+        abrirVentanaInterna(frame);
     }
 
     private void botonLicencia() {
-        try {
-            vista.archivos.IFrmLicenciaUso frame = new vista.archivos.IFrmLicenciaUso();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Licencia de Uso: " + e.getMessage());
-        }
+        vista.archivos.IFrmLicenciaUso frame = new vista.archivos.IFrmLicenciaUso();
+        abrirVentanaInterna(frame);
     }
 
     private void botonAccesoFunciones() {
-        try {
-            vista.archivos.IFrmAccesosFunciones frame = new vista.archivos.IFrmAccesosFunciones();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Licencia de Uso: " + e.getMessage());
-        }
+        vista.archivos.IFrmAccesosFunciones frame = new vista.archivos.IFrmAccesosFunciones();
+        abrirVentanaInterna(frame);
     }
 
     private void configurarVentana() {
         this.setTitle("Menú Archivo");
         this.setSize(748, 500);
         this.setResizable(false);
-
     }
 
     private void utilidades() {

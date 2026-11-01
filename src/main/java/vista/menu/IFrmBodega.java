@@ -1,7 +1,7 @@
 package vista.menu;
 
-import java.awt.Component;
 import java.beans.PropertyVetoException;
+import javax.swing.SwingUtilities;
 import vista.FrmMenuPrincipal;
 
 /**
@@ -19,147 +19,66 @@ public class IFrmBodega extends javax.swing.JInternalFrame {
         configurarVentana();
     }
 
-    private void botonInventario() {
+    // Método auxiliar privado para ubicar el desktopPane del menú principal de forma segura
+    private void abrirVentanaInterna(javax.swing.JInternalFrame frameNueva) {
         try {
-
-            vista.bodegas.IFrmInventario frameInventario = new vista.bodegas.IFrmInventario();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frameInventario);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frameInventario.setVisible(true);
-            frameInventario.setSelected(true);
-            this.dispose();
-
+            javax.swing.JFrame ventanaPrincipal = (javax.swing.JFrame) SwingUtilities.getWindowAncestor(this);
+            
+            if (ventanaPrincipal instanceof FrmMenuPrincipal menu) {
+                menu.getDesktopPane().add(frameNueva);
+                frameNueva.setVisible(true);
+                frameNueva.setSelected(true);
+                this.dispose(); // Cierra el menú desplegable actual
+            }
         } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Hoja de Ruta: " + e.getMessage());
+            System.out.println("Error al enfocar la ventana interna: " + e.getMessage());
         }
+    }
+
+    private void botonInventario() {
+        vista.bodegas.IFrmInventario frameInventario = new vista.bodegas.IFrmInventario();
+        abrirVentanaInterna(frameInventario);
     }
 
     private void botonVentasFamilia() {
-        try {
-
-            vista.bodegas.IFrmVentasPorFamilia frameFamilia = new vista.bodegas.IFrmVentasPorFamilia();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frameFamilia);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frameFamilia.setVisible(true);
-            frameFamilia.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Hoja de Ruta: " + e.getMessage());
-        }
+        vista.bodegas.IFrmVentasPorFamilia frameFamilia = new vista.bodegas.IFrmVentasPorFamilia();
+        abrirVentanaInterna(frameFamilia);
     }
 
     private void botonRegistroProducto() {
-        try {
-
-            vista.bodegas.IFrmRegistroProductos producto = new vista.bodegas.IFrmRegistroProductos();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(producto);
-
-            // 3. La hacemos visible y la mandamos al frente
-            producto.setVisible(true);
-            producto.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Registro de productos: " + e.getMessage());
-        }
+        vista.bodegas.IFrmRegistroProductos producto = new vista.bodegas.IFrmRegistroProductos();
+        abrirVentanaInterna(producto);
     }
 
     private void botonRegistroFamilia() {
-        try {
-
-            vista.bodegas.IFrmRegistroFamilias familia = new vista.bodegas.IFrmRegistroFamilias();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(familia);
-
-            // 3. La hacemos visible y la mandamos al frente
-            familia.setVisible(true);
-            familia.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Registro de Familia: " + e.getMessage());
-        }
+        vista.bodegas.IFrmRegistroFamilias familia = new vista.bodegas.IFrmRegistroFamilias();
+        abrirVentanaInterna(familia);
     }
 
     private void botonIngresoMercaderia() {
-        try {
-
-            vista.bodegas.IFrmIngresoMercaderia frame = new vista.bodegas.IFrmIngresoMercaderia();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frame);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Ingreso de Mercadería: " + e.getMessage());
-        }
+        vista.bodegas.IFrmIngresoMercaderia frame = new vista.bodegas.IFrmIngresoMercaderia();
+        abrirVentanaInterna(frame);
     }
 
     private void botonKardex() {
-        try {
-
-            vista.bodegas.IFrmKardexMercaderia frame = new vista.bodegas.IFrmKardexMercaderia();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frame);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al Abrir Kardex de Mercadería: " + e.getMessage());
-        }
+        vista.bodegas.IFrmKardexMercaderia frame = new vista.bodegas.IFrmKardexMercaderia();
+        abrirVentanaInterna(frame);
     }
 
     private void botonInventarioCritico() {
-        try {
-
-            vista.bodegas.IFrmInventarioCritico frame = new vista.bodegas.IFrmInventarioCritico();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frame);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al Abrir Inventario Crítico: " + e.getMessage());
-        }
+        vista.bodegas.IFrmInventarioCritico frame = new vista.bodegas.IFrmInventarioCritico();
+        abrirVentanaInterna(frame);
     }
 
     private void botonRotProducto() {
-        try {
-
-            vista.bodegas.IFrmRotacionVentas frame = new vista.bodegas.IFrmRotacionVentas();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frame);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al Abrir Rotación de Ventas: " + e.getMessage());
-        }
+        vista.bodegas.IFrmRotacionVentas frame = new vista.bodegas.IFrmRotacionVentas();
+        abrirVentanaInterna(frame);
     }
 
     private void configurarVentana() {
         this.setTitle("Bodega");
         this.setSize(767, 464);
         this.setResizable(false);
-
     }
 
     private void utilidades() {
@@ -194,8 +113,8 @@ public class IFrmBodega extends javax.swing.JInternalFrame {
         utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
                 btnVentasFamilia, jSeparator8, 90, 4, java.awt.Color.LIGHT_GRAY
         );
-
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -1,6 +1,7 @@
 package vista.menu;
 
 import java.beans.PropertyVetoException;
+import javax.swing.SwingUtilities;
 import vista.FrmMenuPrincipal;
 
 /**
@@ -16,50 +17,43 @@ public class IFrmCompras extends javax.swing.JInternalFrame {
         initComponents();
         utilidades();
         configurarVentana();
-
+    }
+    
+    // Método auxiliar privado para ubicar el desktopPane del menú principal de forma segura
+    private void abrirVentanaInterna(javax.swing.JInternalFrame frameNueva) {
+        try {
+            javax.swing.JFrame ventanaPrincipal = (javax.swing.JFrame) SwingUtilities.getWindowAncestor(this);
+            
+            if (ventanaPrincipal instanceof FrmMenuPrincipal menu) {
+                menu.getDesktopPane().add(frameNueva);
+                frameNueva.setVisible(true);
+                frameNueva.setSelected(true);
+                this.dispose(); // Cierra el menú desplegable actual
+            }
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al enfocar la ventana interna: " + e.getMessage());
+        }
     }
 
     private void botonProveedores() {
-        try {
-            vista.compras.IFrmProveedores frame = new vista.compras.IFrmProveedores();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Proveedores: " + e.getMessage());
-        }
+        vista.compras.IFrmProveedores frame = new vista.compras.IFrmProveedores();
+        abrirVentanaInterna(frame);
     }
 
     private void botonCompras() {
-        try {
-            vista.compras.IFrmIngresoCompras frame = new vista.compras.IFrmIngresoCompras();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al ingresar compras: " + e.getMessage());
-        }
+        vista.compras.IFrmIngresoCompras frame = new vista.compras.IFrmIngresoCompras();
+        abrirVentanaInterna(frame);
     }
 
     private void botonLibroCompra() {
-        try {
-            vista.compras.IFrmLibroCompras frame = new vista.compras.IFrmLibroCompras();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al ingresar libro de compras: " + e.getMessage());
-        }
+        vista.compras.IFrmLibroCompras frame = new vista.compras.IFrmLibroCompras();
+        abrirVentanaInterna(frame);
     }
 
     private void configurarVentana() {
         this.setTitle("Compras");
         this.setSize(490, 310);
         this.setResizable(false);
-
     }
 
     private void utilidades() {

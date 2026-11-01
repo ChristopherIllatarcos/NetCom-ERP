@@ -1,8 +1,8 @@
 package vista.menu;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.beans.PropertyVetoException;
+import javax.swing.SwingUtilities;
 import vista.FrmMenuPrincipal;
 
 /**
@@ -15,141 +15,81 @@ public class IFrmVentas extends javax.swing.JInternalFrame {
         initComponents();
         utilidades();
         configurarVentana();
+    }
 
+    // Método auxiliar privado para ubicar el desktopPane del menú principal de forma segura
+    private void abrirVentanaInterna(javax.swing.JInternalFrame frameNueva) {
+        try {
+            // Buscamos la ventana principal (JFrame) contenedor actual de este JInternalFrame
+            javax.swing.JFrame ventanaPrincipal = (javax.swing.JFrame) SwingUtilities.getWindowAncestor(this);
+            
+            if (ventanaPrincipal instanceof FrmMenuPrincipal menu) {
+                menu.getDesktopPane().add(frameNueva);
+                frameNueva.setVisible(true);
+                frameNueva.setSelected(true);
+                this.dispose(); // Cierra el menú desplegable actual
+            }
+        } catch (PropertyVetoException e) {
+            System.out.println("Error al enfocar la ventana interna: " + e.getMessage());
+        }
     }
 
     private void botonHojaRuta() {
-        try {
-            // 1. Instanciamos la nueva ventana de Hoja de Ruta
-            vista.ventas.IFrmHojaRuta frameHojaRuta = new vista.ventas.IFrmHojaRuta();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frameHojaRuta);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frameHojaRuta.setVisible(true);
-            frameHojaRuta.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Hoja de Ruta: " + e.getMessage());
-        }
+        vista.ventas.IFrmHojaRuta frameHojaRuta = new vista.ventas.IFrmHojaRuta();
+        abrirVentanaInterna(frameHojaRuta);
     }
 
     private void botonConsultaDoc() {
-        try {
-            vista.ventas.IFrmConsultaDocumentos frame = new vista.ventas.IFrmConsultaDocumentos();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Consulta de Documentos: " + e.getMessage());
-        }
+        vista.ventas.IFrmConsultaDocumentos frame = new vista.ventas.IFrmConsultaDocumentos();
+        abrirVentanaInterna(frame);
     }
 
     private void botonComision() {
-        try {
-            vista.ventas.IFrmComisiones frame = new vista.ventas.IFrmComisiones();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Comisiones por Ventas: " + e.getMessage());
-        }
+        vista.ventas.IFrmComisiones frame = new vista.ventas.IFrmComisiones();
+        abrirVentanaInterna(frame);
     }
 
     private void botonInformeVenta() {
-        try {
-            vista.ventas.IFrmReporteVentasCliente frame = new vista.ventas.IFrmReporteVentasCliente();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Comisiones por Ventas: " + e.getMessage());
-        }
+        vista.ventas.IFrmReporteVentasCliente frame = new vista.ventas.IFrmReporteVentasCliente();
+        abrirVentanaInterna(frame);
     }
 
     private void botonComisionCobranza() {
-        try {
-            vista.ventas.IFrmComisionesCobranza frame = new vista.ventas.IFrmComisionesCobranza();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Comisiones por Cobranza: " + e.getMessage());
-        }
+        vista.ventas.IFrmComisionesCobranza frame = new vista.ventas.IFrmComisionesCobranza();
+        abrirVentanaInterna(frame);
     }
 
     private void botonVentaIngreso() {
-        try {
-            // 1. Instanciamos la nueva ventana de Hoja de Ruta
-            vista.ventas.IFrmIngresoVentas frameVentas = new vista.ventas.IFrmIngresoVentas();
-
-            Component add = FrmMenuPrincipal.desktopPane.add(frameVentas);
-
-            // 3. La hacemos visible y la mandamos al frente
-            frameVentas.setVisible(true);
-            frameVentas.setSelected(true);
-            this.dispose();
-
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Ventas: " + e.getMessage());
-        }
+        vista.ventas.IFrmIngresoVentas frameVentas = new vista.ventas.IFrmIngresoVentas();
+        abrirVentanaInterna(frameVentas);
     }
 
     private void botonMantencionVentas() {
-        try {
-            vista.ventas.IFrmResumenVentas frame = new vista.ventas.IFrmResumenVentas();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Resumen de Ventas: " + e.getMessage());
-        }
+        vista.ventas.IFrmResumenVentas frame = new vista.ventas.IFrmResumenVentas();
+        abrirVentanaInterna(frame);
     }
 
     private void botonFichaVendedores() {
-        try {
-            vista.ventas.IFrmFichaVendedores frame = new vista.ventas.IFrmFichaVendedores();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Ficha de vendedores: " + e.getMessage());
-        }
+        vista.ventas.IFrmFichaVendedores frame = new vista.ventas.IFrmFichaVendedores();
+        abrirVentanaInterna(frame);
     }
 
     private void botonFichaClientes() {
-        try {
-            vista.ventas.IFrmFichaClientes frame = new vista.ventas.IFrmFichaClientes();
-            FrmMenuPrincipal.desktopPane.add(frame);
-            frame.setVisible(true);
-            frame.setSelected(true);
-            this.dispose(); // Cierra el menú desplegable de iconos
-        } catch (PropertyVetoException e) {
-            System.out.println("Error al abrir Ficha de clientes: " + e.getMessage());
-        }
+        vista.ventas.IFrmFichaClientes frame = new vista.ventas.IFrmFichaClientes();
+        abrirVentanaInterna(frame);
     }
 
     private void configurarVentana() {
         this.setTitle("Ventas");
         this.setSize(597, 530);
         this.setResizable(false);
-
     }
 
     private void utilidades() {
-        // Configuración para el primer botón
         utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
                 btnVentasIngreso, jSeparator2, 90, 4, java.awt.Color.LIGHT_GRAY
         );
 
-        // Configuración para el segundo botón
         utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
                 btnConsultaDocumentos, jSeparator3, 90, 4, java.awt.Color.LIGHT_GRAY
         );
@@ -158,7 +98,8 @@ public class IFrmVentas extends javax.swing.JInternalFrame {
                 btnHojaRuta, jSeparator4, 90, 4, java.awt.Color.LIGHT_GRAY
         );
 
-        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(btnMantencionVentas, jSeparator5, 90, 4, java.awt.Color.LIGHT_GRAY
+        utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
+                btnMantencionVentas, jSeparator5, 90, 4, java.awt.Color.LIGHT_GRAY
         );
 
         utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
@@ -180,8 +121,8 @@ public class IFrmVentas extends javax.swing.JInternalFrame {
         utilidades.DisenoEstilos.aplicarEstiloBotonConLinea(
                 btnFichaVendedores, jSeparator10, 90, 4, java.awt.Color.LIGHT_GRAY
         );
-
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

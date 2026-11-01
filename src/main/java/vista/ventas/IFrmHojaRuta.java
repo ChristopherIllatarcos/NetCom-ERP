@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import vista.FrmMenuPrincipal;
 
@@ -185,16 +184,22 @@ public class IFrmHojaRuta extends javax.swing.JInternalFrame {
             // 1. Instanciamos la nueva ventana de Hoja de Ruta
             vista.ventas.IFrmConsultaHojasRuta frameHojaRuta = new vista.ventas.IFrmConsultaHojasRuta();
 
-            Component add = FrmMenuPrincipal.desktopPane.add(frameHojaRuta);
+            // 2. Obtenemos el contenedor principal de forma segura desde la jerarquía visual actual
+            javax.swing.JFrame ventanaPrincipal = (javax.swing.JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
 
-            // 3. La hacemos visible y la mandamos al frente
+            if (ventanaPrincipal instanceof vista.FrmMenuPrincipal) {
+                vista.FrmMenuPrincipal menu = (vista.FrmMenuPrincipal) ventanaPrincipal;
+
+            }
+
+            // La hacemos visible y al frente
             frameHojaRuta.setVisible(true);
             frameHojaRuta.setSelected(true);
 
-            // 4. (Opcional) Cerramos el submenú actual para mantener la pantalla limpia
+            // Cerramos el submenú actual si corresponde
             this.dispose();
 
-        } catch (PropertyVetoException e) {
+        } catch (java.beans.PropertyVetoException e) {
             System.out.println("Error al abrir Hoja de Ruta: " + e.getMessage());
         }
     }
@@ -217,7 +222,6 @@ public class IFrmHojaRuta extends javax.swing.JInternalFrame {
             // Si ocurre algún error, dejamos al menos las opciones por defecto para que no se caiga la ventana
             System.out.println("Error al cargar los tipos de documento desde la BD: " + e.getMessage());
 
-             
             cmbTipoDoc.addItem("BOLETA ELECTRONICA");
             cmbTipoDoc.addItem("FACTURA ELECTRONICA");
             cmbTipoDoc.addItem("GUIA DE DESPACHO");
