@@ -170,7 +170,7 @@ public class CompraDAO {
                 ps.setDate(index++, new java.sql.Date(fechaDesde.getTime()));
             }
             if (fechaHasta != null) {
-                ps.setDate(index++, new java.sql.Date(fechaHasta.getTime()));
+                ps.setDate(index++, new java.sql.Date(fechaHasta.getTime() + 86399000L));
             }
 
             try (ResultSet rs = ps.executeQuery()) {

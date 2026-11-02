@@ -30,9 +30,12 @@ public class ComisionDAO {
                 + "ORDER BY v.nombre ASC";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setTimestamp(1, new java.sql.Timestamp(desde.getTime()));
+            ps.setTimestamp(2, new java.sql.Timestamp(hasta.getTime() + 86399000L));
 
-            ps.setDate(1, new java.sql.Date(desde.getTime()));
-            ps.setDate(2, new java.sql.Date(hasta.getTime()));
+//            ps.setDate(1, new java.sql.Date(desde.getTime()));
+//            ps.setDate(2, new java.sql.Date(hasta.getTime()));
 
             try (ResultSet rs = ps.executeQuery()) {
                 int contador = 1;
@@ -74,8 +77,10 @@ public class ComisionDAO {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, vendedorId);
-            ps.setDate(2, new java.sql.Date(desde.getTime()));
-            ps.setDate(3, new java.sql.Date(hasta.getTime()));
+              ps.setTimestamp(2, new java.sql.Timestamp(desde.getTime()));
+              ps.setTimestamp(3, new java.sql.Timestamp(hasta.getTime() + 86399000L));
+//            ps.setDate(2, new java.sql.Date(desde.getTime()));
+//            ps.setDate(3, new java.sql.Date(hasta.getTime()));
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

@@ -132,7 +132,7 @@ public class ConsultaDocumentosDAO {
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
             ps.setDate(1, new java.sql.Date(desde.getTime()));
-            ps.setDate(2, new java.sql.Date(hasta.getTime()));
+            ps.setDate(2, new java.sql.Date(hasta.getTime() + 86399000L));
 
             if (idVendedor > 0) {
                 ps.setInt(3, idVendedor);

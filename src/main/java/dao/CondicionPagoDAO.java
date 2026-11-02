@@ -42,25 +42,32 @@ public class CondicionPagoDAO {
         }
     }
 
-    // Modificar el nombre de una condición de pago existente
+    // Actualizar condición usando el nombre antiguo como filtro
     public boolean actualizarCondicionPago(String nombreAntiguo, String nuevoNombre) {
         String sql = "UPDATE condiciones_pago SET nombre = ? WHERE nombre = ?";
+
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setString(1, nuevoNombre);
             ps.setString(2, nombreAntiguo);
+
             return ps.executeUpdate() > 0;
+
         } catch (Exception e) {
             System.err.println("Error al actualizar condición de pago: " + e.getMessage());
             return false;
         }
     }
 
-// Borrado lógico (Desactivar para no romper el historial de ventas/compras)
+// Borrado lógico usando el nombre como filtro (Soft Delete)
     public boolean eliminarCondicionPago(String nombre) {
         String sql = "UPDATE condiciones_pago SET activo = FALSE WHERE nombre = ?";
+
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setString(1, nombre);
             return ps.executeUpdate() > 0;
+
         } catch (Exception e) {
             System.err.println("Error al eliminar condición de pago: " + e.getMessage());
             return false;

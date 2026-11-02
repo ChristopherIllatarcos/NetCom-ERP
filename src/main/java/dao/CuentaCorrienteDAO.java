@@ -102,7 +102,7 @@ public class CuentaCorrienteDAO {
         }
         if (fechaFin != null) {
             sql.append("AND v.fecha_emision <= ? ");
-            parametros.add(new java.sql.Date(fechaFin.getTime()));
+            parametros.add(new java.sql.Date(fechaFin.getTime() + 86399000L));
         }
 
         sql.append("ORDER BY v.fecha_emision DESC");
@@ -187,8 +187,8 @@ public class CuentaCorrienteDAO {
             System.err.println("Error al obtener estadísticas de ventas: " + e.getMessage());
         }
 
-        // 3. Obtener estadísticas de Pagos de Clientes
-        String sqlPagos = "SELECT COUNT(*), SUM(monto_pagado), AVG(monto_pagado), MAX(monto_pagado) FROM pagos_clientes WHERE cliente_id = ?";
+        // 3. Obtener estadísticas de Pagos de Clientes (incluyendo la fecha máxima)
+        String sqlPagos = "SELECT COUNT(*), SUM(monto_pagado), AVG(monto_pagado), MAX(monto_pagado), MAX(fecha) FROM pagos_clientes WHERE cliente_id = ?";
         try (java.sql.Connection con = ConexionDB.getConnection(); java.sql.PreparedStatement ps = con.prepareStatement(sqlPagos)) {
             ps.setInt(1, clienteId);
             try (java.sql.ResultSet rs = ps.executeQuery()) {
@@ -197,6 +197,10 @@ public class CuentaCorrienteDAO {
                     stats.put("total_pagos", rs.getBigDecimal(2) != null ? rs.getBigDecimal(2).doubleValue() : 0.0);
                     stats.put("prom_pagos", rs.getBigDecimal(3) != null ? rs.getBigDecimal(3).doubleValue() : 0.0);
                     stats.put("max_pago", rs.getBigDecimal(4) != null ? rs.getBigDecimal(4).doubleValue() : 0.0);
+                    java.sql.Date ultimaFechaPago = rs.getDate(5);
+                    if (ultimaFechaPago != null) {
+                        stats.put("ultimo_pago", new java.text.SimpleDateFormat("dd/MM/yyyy").format(ultimaFechaPago));
+                    }
                 }
             }
         } catch (java.sql.SQLException e) {
@@ -237,19 +241,43 @@ public class CuentaCorrienteDAO {
      */
     public java.util.List<Object[]> obtenerCartolaClientePorVentas(int clienteId, java.util.Date fechaInicio, java.util.Date fechaFin) {
         java.util.List<Object[]> listaDetalle = new java.util.ArrayList<>();
+        java.util.List<Object> parametros = new java.util.ArrayList<>();
 
-        String sqlVentas = "SELECT fecha_emision AS fecha, tipo_documento AS documento, numero_documento AS n_doc, "
-                + "total AS cargo, 0.0 AS abono FROM ventas WHERE cliente_id = ? ";
+        // Base de ventas
+        StringBuilder sqlVentas = new StringBuilder("SELECT fecha_emision AS fecha, tipo_documento AS documento, numero_documento AS n_doc, total AS cargo, 0.0 AS abono FROM ventas WHERE cliente_id = ? ");
+        parametros.add(clienteId);
 
-        String sqlPagos = "SELECT TO_DATE(fecha, 'YYYY-MM-DD') AS fecha, 'RECIBO PAGO' AS documento, numero_recibo AS n_doc, "
-                + "0.0 AS cargo, monto_pagado AS abono FROM pagos_clientes WHERE cliente_id = ? ";
+        // Base de pagos
+        StringBuilder sqlPagos = new StringBuilder("SELECT TO_DATE(fecha, 'YYYY-MM-DD') AS fecha, 'RECIBO PAGO' AS documento, numero_recibo AS n_doc, 0.0 AS cargo, monto_pagado AS abono FROM pagos_clientes WHERE cliente_id = ? ");
+        parametros.add(clienteId);
 
-        String sqlFinal = "SELECT * FROM (" + sqlVentas + " UNION ALL " + sqlPagos + ") sub ORDER BY fecha ASC";
+        // Aplicar filtros de fecha si vienen presentes
+        String filtroFechaVentas = "";
+        String filtroFechaPagos = "";
+
+        if (fechaInicio != null) {
+            filtroFechaVentas += "AND fecha_emision >= ? ";
+            filtroFechaPagos += "AND TO_DATE(fecha, 'YYYY-MM-DD') >= ? ";
+            parametros.add(new java.sql.Date(fechaInicio.getTime()));
+        }
+        if (fechaFin != null) {
+            // Usamos Timestamp con offset para abarcar hasta las 23:59:59 si es necesario, o java.sql.Date
+            filtroFechaVentas += "AND fecha_emision <= ? ";
+            filtroFechaPagos += "AND TO_DATE(fecha, 'YYYY-MM-DD') <= ? ";
+            parametros.add(new java.sql.Timestamp(fechaFin.getTime() + 86399000L));
+        }
+
+        sqlVentas.append(filtroFechaVentas);
+        sqlPagos.append(filtroFechaPagos);
+
+        String sqlFinal = "SELECT * FROM (" + sqlVentas.toString() + " UNION ALL " + sqlPagos.toString() + ") sub ORDER BY fecha ASC";
 
         try (java.sql.Connection con = ConexionDB.getConnection(); java.sql.PreparedStatement ps = con.prepareStatement(sqlFinal)) {
 
-            ps.setInt(1, clienteId);
-            ps.setInt(2, clienteId);
+            // Asignar todos los parámetros dinámicamente en orden (cliente1, fechaIni1?, fechaFin1?, cliente2, fechaIni2?, fechaFin2?)
+            for (int i = 0; i < parametros.size(); i++) {
+                ps.setObject(i + 1, parametros.get(i));
+            }
 
             try (java.sql.ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -278,7 +306,7 @@ public class CuentaCorrienteDAO {
      */
     public Object[] buscarClientePorRut(String rut) {
         Object[] cliente = null;
-        String sql = "SELECT id, nombre FROM clientes WHERE rut = ?";
+        String sql = "SELECT id, nombre FROM clientes WHERE REPLACE(REPLACE(rut, '-', ''), '.', '') = REPLACE(REPLACE(?, '-', ''), '.', '')";
 
         try (java.sql.Connection con = ConexionDB.getConnection(); java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
 
