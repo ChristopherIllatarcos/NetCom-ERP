@@ -9,6 +9,7 @@ public class IFrmFoliadorHojas extends javax.swing.JInternalFrame {
     private final FoliadorDAO dao = new FoliadorDAO();
     private boolean esEdicion = false;
     private String serieOriginalEdicion = "";
+    private String tipoDocOriginalEdicion = "";
 
     public IFrmFoliadorHojas() {
         initComponents();
@@ -75,8 +76,8 @@ public class IFrmFoliadorHojas extends javax.swing.JInternalFrame {
 
             boolean exito;
             if (esEdicion) {
-                // Si estamos editando, hacemos UPDATE
-                exito = dao.modificarRango(tipoDoc, serie, ini, fin, act, estado, serieOriginalEdicion);
+                // Si estamos editando, hacemos UPDATE (agregando el tipoDocOriginal para blindar la llave compuesta)
+                exito = dao.modificarRango(tipoDoc, serie, ini, fin, act, estado, tipoDocOriginalEdicion, serieOriginalEdicion);
             } else {
                 // Si es un registro nuevo, hacemos INSERT
                 exito = dao.guardarRango(tipoDoc, serie, ini, fin, act, estado);
@@ -112,8 +113,9 @@ public class IFrmFoliadorHojas extends javax.swing.JInternalFrame {
         txtFolioActual.setText(modelo.getValueAt(fila, 4).toString());
         cmbEstado.setSelectedItem(modelo.getValueAt(fila, 5).toString());
 
-        // Activamos el modo edición
+        // Activamos el modo edición y guardamos las llaves originales completas
         esEdicion = true;
+        tipoDocOriginalEdicion = modelo.getValueAt(fila, 0).toString();
         serieOriginalEdicion = modelo.getValueAt(fila, 1).toString();
     }
 
@@ -124,16 +126,22 @@ public class IFrmFoliadorHojas extends javax.swing.JInternalFrame {
             return;
         }
 
+        DefaultTableModel modelo = (DefaultTableModel) tblRango.getModel();
+
+        // Extraemos los datos clave y el estado actual de la grilla
+        String tipoDoc = modelo.getValueAt(fila, 0).toString();
+        String serie = modelo.getValueAt(fila, 1).toString();
+        String estadoActual = modelo.getValueAt(fila, 5).toString();
+
+        if ("Anulado".equalsIgnoreCase(estadoActual)) {
+            utilidades.AlertaUtil.mostrarAdvertencia(this, "Este rango de folios ya se encuentra anulado.");
+            return;
+        }
+
         // Pedir confirmación usando el booleano de AlertaUtil
         boolean confirmar = utilidades.AlertaUtil.mostrarConfirmacion(this, "¿Está seguro de anular este rango de folios?");
 
         if (confirmar) {
-            DefaultTableModel modelo = (DefaultTableModel) tblRango.getModel();
-
-            // Extraemos el tipo de documento y la serie de la fila seleccionada
-            String tipoDoc = modelo.getValueAt(fila, 0).toString();
-            String serie = modelo.getValueAt(fila, 1).toString();
-
             // Llamamos al DAO para actualizar directamente en la BD
             boolean exito = dao.actualizarEstadoRango(tipoDoc, serie, "Anulado");
 

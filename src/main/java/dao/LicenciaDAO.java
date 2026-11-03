@@ -12,13 +12,14 @@ public class LicenciaDAO {
     /**
      * Consulta la BD y retorna un objeto Licencia con TODOS los campos de la
      * tabla.
-     * @return 
+     *
+     * @return
      */
     public Licencia obtenerLicenciaActiva() {
         Licencia lic = null;
         String sql = "SELECT id, rut_licenciatario, razon_social, estado, tipo_licencia, "
                 + "cajas_nodos_permitidos, en_uso, fecha_activacion, fecha_vencimiento, serial_key "
-                + "FROM licencia LIMIT 1;";
+                + "FROM licencia WHERE estado = 'ACTIVA' LIMIT 1;";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -36,18 +37,19 @@ public class LicenciaDAO {
                 lic.setSerialKey(rs.getString("serial_key"));
             }
         } catch (SQLException e) {
-            System.err.println("Error al consultar la licencia: " + e.getMessage());
+            System.err.println("Error al consultar la licencia activa: " + e.getMessage());
         }
         return lic;
     }
 
     /**
      * Actualiza la clave de licencia (serial_key) en la base de datos.
+     *
      * @param nuevaClave
-     * @return 
+     * @return
      */
     public boolean actualizarClaveLicencia(String nuevaClave) {
-        String sql = "UPDATE licencia SET serial_key = ? WHERE id = (SELECT id FROM licencia LIMIT 1);";
+        String sql = "UPDATE licencia SET serial_key = ? WHERE id = 1;";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 

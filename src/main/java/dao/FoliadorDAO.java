@@ -83,8 +83,7 @@ public class FoliadorDAO {
             ps.setString(1, nuevoEstado);
             ps.setString(2, tipoDoc);
             ps.setString(3, serie);
-            ps.executeUpdate();
-            return true;
+            return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
             System.err.println("Error al actualizar estado del rango: " + e.getMessage());
@@ -93,8 +92,8 @@ public class FoliadorDAO {
     }
 
     // Modificar un rango existente en la base de datos
-    public boolean modificarRango(String tipoDoc, String serie, int ini, int fin, int actual, String estado, String serieOriginal) {
-        String sql = "UPDATE foliador_rangos SET tipo_documento = ?, serie_imprenta = ?, folio_inicial = ?, folio_final = ?, folio_actual = ?, estado = ? WHERE serie_imprenta = ?";
+    public boolean modificarRango(String tipoDoc, String serie, int ini, int fin, int actual, String estado, String tipoDocOriginal, String serieOriginal) {
+        String sql = "UPDATE foliador_rangos SET tipo_documento = ?, serie_imprenta = ?, folio_inicial = ?, folio_final = ?, folio_actual = ?, estado = ? WHERE tipo_documento = ? AND serie_imprenta = ?";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -104,15 +103,14 @@ public class FoliadorDAO {
             ps.setInt(4, fin);
             ps.setInt(5, actual);
             ps.setString(6, estado);
-            ps.setString(7, serieOriginal); // Filtro para actualizar la fila correcta
+            ps.setString(7, tipoDocOriginal); // Filtro compuesto original
+            ps.setString(8, serieOriginal);   // Filtro compuesto original
 
-            ps.executeUpdate();
-            return true;
+            return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
             System.err.println("Error al modificar el rango: " + e.getMessage());
             return false;
         }
     }
-
 }

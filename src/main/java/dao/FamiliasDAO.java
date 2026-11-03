@@ -11,7 +11,6 @@ import modelo.FamiliaDTO;
 
 public class FamiliasDAO {
 
-
     public List<FamiliaDTO> listarFamilias() {
         List<FamiliaDTO> lista = new ArrayList<>();
         String sql = "SELECT id, codigo, nombre, descripcion FROM familias WHERE activo = TRUE ORDER BY id ASC";
@@ -63,13 +62,16 @@ public class FamiliasDAO {
     }
 
     public boolean eliminarFamilia(int id) {
-        String sql = "DELETE FROM familias WHERE id = ?";
+        // Cambiamos el DELETE físico por un Soft Delete lógico
+        String sql = "UPDATE familias SET activo = FALSE WHERE id = ?";
+
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error al eliminar familia: " + e.getMessage());
+            System.err.println("Error al desactivar familia: " + e.getMessage());
             return false;
         }
     }
+
 }

@@ -29,9 +29,17 @@ public class IFrmLibroCompras extends javax.swing.JInternalFrame {
         };
         tblDetalleCompras.setModel(modeloTabla);
 
-        // 2. Cargar los proveedores en el ComboBox al iniciar
+        // 2. Cargar los proveedores en el ComboBox usando el método puro del DAO
         LibroComprasDAO dao = new LibroComprasDAO();
-        dao.cargarProveedores((javax.swing.JComboBox) cmbProveedor);
+
+        // Forzamos el cast a JComboBox (sin tipo estricto) para evitar el conflicto de tipos del IDE
+        javax.swing.JComboBox cmbGenerico = (javax.swing.JComboBox) cmbProveedor;
+        cmbGenerico.removeAllItems();
+        cmbGenerico.addItem(new modelo.ItemCombo(0, "-- TODOS LOS PROVEEDORES --"));
+
+        for (modelo.ItemCombo prov : dao.listarProveedoresCombo()) {
+            cmbGenerico.addItem(prov);
+        }
 
         // 3. Limpiar selectores de fecha por defecto
         jDateChooserFechaInicio.setDate(null);
@@ -90,27 +98,31 @@ public class IFrmLibroCompras extends javax.swing.JInternalFrame {
         java.util.Date fechaInicio = jDateChooserFechaInicio.getDate();
         java.util.Date fechaFinal = jDateChooserFechaFinal.getDate();
 
-        // Obtenemos el item seleccionado del ComboBox de proveedores
-        LibroComprasDAO.ItemCombo itemProveedor = (LibroComprasDAO.ItemCombo) cmbProveedor.getSelectedItem();
+        // 1. Obtenemos el item seleccionado del ComboBox usando el modelo correcto
+        modelo.ItemCombo itemProveedor = (modelo.ItemCombo) cmbProveedor.getSelectedItem();
         int proveedorId = (itemProveedor != null) ? itemProveedor.getId() : 0;
 
-        DefaultTableModel modelo = (DefaultTableModel) tblDetalleCompras.getModel();
-        modelo.setRowCount(0); // Limpiar tabla
+        DefaultTableModel modeloTabla = (DefaultTableModel) tblDetalleCompras.getModel();
+        modeloTabla.setRowCount(0); // Limpiar tabla
 
         LibroComprasDAO dao = new LibroComprasDAO();
 
-        // Llamamos al método que trae los datos y actualiza los labels de totales
+        // 2. Llamamos al método puro del DAO (solo pasando los filtros: fechas e ID)
         java.util.List<modelo.LibroCompra> lista = dao.consultarLibroCompras(
-                fechaInicio, fechaFinal, proveedorId, lblTotalDoctos, lblTotalNeto, lblTtotalCompras
+                fechaInicio, fechaFinal, proveedorId
         );
 
-        // Formato de moneda para la tabla
+        // Formato de moneda y fecha
         java.text.DecimalFormatSymbols simbolos = new java.text.DecimalFormatSymbols();
         simbolos.setGroupingSeparator('.');
         java.text.DecimalFormat formatoMoneda = new java.text.DecimalFormat("$ #,##0", simbolos);
         java.text.SimpleDateFormat formatoFecha = new java.text.SimpleDateFormat("dd/MM/yyyy");
 
-        // Llenar la tabla con los resultados
+        int totalDoctos = 0;
+        double sumaNeto = 0.0;
+        double sumaTotal = 0.0;
+
+        // 3. Llenar la tabla con los resultados y calcular totales al vuelo
         for (modelo.LibroCompra lc : lista) {
             Object[] fila = {
                 lc.getFecha() != null ? formatoFecha.format(lc.getFecha()) : "",
@@ -120,8 +132,17 @@ public class IFrmLibroCompras extends javax.swing.JInternalFrame {
                 formatoMoneda.format(lc.getIva()),
                 formatoMoneda.format(lc.getTotal())
             };
-            modelo.addRow(fila);
+            modeloTabla.addRow(fila);
+
+            totalDoctos++;
+            sumaNeto += lc.getNeto();
+            sumaTotal += lc.getTotal();
         }
+
+        // 4. Actualizar las etiquetas visuales de resumen en la interfaz
+        lblTotalDoctos.setText(String.valueOf(totalDoctos));
+        lblTotalNeto.setText(formatoMoneda.format(sumaNeto));
+        lblTtotalCompras.setText(formatoMoneda.format(sumaTotal));
     }
 
     private void botonExcel() {

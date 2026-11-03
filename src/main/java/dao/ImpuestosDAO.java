@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import modelo.ItemCombo; 
+import modelo.ItemCombo;
 
 public class ImpuestosDAO {
 
@@ -84,16 +84,17 @@ public class ImpuestosDAO {
         }
     }
 
-    // --- 5. Eliminar (o desactivar) impuesto ---
     public boolean eliminarImpuesto(int id) {
-        String sql = "DELETE FROM impuestos_adicionales WHERE id = ?";
+        // CORREGIDO: Aplicamos Soft Delete para no romper la integridad referencial con ventas históricas
+        String sql = "UPDATE impuestos_adicionales SET activo = FALSE WHERE id = ?";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error al eliminar impuesto (puede estar en uso): " + e.getMessage());
+            System.err.println("Error al desactivar el impuesto: " + e.getMessage());
             return false;
         }
     }
+
 }
