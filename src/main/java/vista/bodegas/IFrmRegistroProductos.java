@@ -1,5 +1,6 @@
 package vista.bodegas;
 
+import dao.ProductosDAO;
 import java.util.List;
 
 /**
@@ -9,15 +10,15 @@ import java.util.List;
 public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
 
     private int idProductoActual = 0;
-
+    private ProductosDAO daoProd = new ProductosDAO();
+    
     public IFrmRegistroProductos() {
         initComponents();
         colorBotones();
         cargarComboBodegas();
         cargarComboImpuestos();
         quitarBordeBarra();
-        dao.ProductosDAO daoProd = new dao.ProductosDAO();
-        daoProd.cargarCategorias((javax.swing.JComboBox) cmbFamiliaCategoria);
+        cargarComboFamilias();
         limpiarFormulario();
         configuracionVentana();
     }
@@ -271,7 +272,7 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
     private void botonGestionar() {
         dao.BodegasDAO daoBodega = new dao.BodegasDAO();
 
-        // 🌟 Cambiado a String[] para que coincida perfectamente con AlertaUtil.mostrarOpciones
+        //Cambiado a String[] para que coincida perfectamente con AlertaUtil.mostrarOpciones
         String[] opciones = {"Nuevo", "Editar", "Eliminar / Desactivar", "Cancelar"};
 
         int seleccion = utilidades.AlertaUtil.mostrarOpciones(
@@ -527,6 +528,25 @@ public class IFrmRegistroProductos extends javax.swing.JInternalFrame {
         for (modelo.ItemCombo imp : lista) {
             comboGenerico.addItem(imp);
         }
+    }
+
+    private void cargarComboFamilias() {
+        // Usamos el modelo estándar de Swing compatible con cualquier JComboBox
+        javax.swing.DefaultComboBoxModel modeloCombo = new javax.swing.DefaultComboBoxModel();
+
+        // Agregamos la opción por defecto directamente al modelo de la vista
+        modeloCombo.addElement(new modelo.ItemCombo(0, "-- SELECCIONE FAMILIA --"));
+
+        // Obtenemos la lista desde el DAO
+        java.util.List<modelo.ItemCombo> lista = daoProd.listarFamiliasCombo();
+
+        // Llenamos el modelo con los elementos del DAO
+        for (modelo.ItemCombo item : lista) {
+            modeloCombo.addElement(item);
+        }
+
+        // Asignamos el modelo al combo sin conflictos de tipos
+        cmbFamiliaCategoria.setModel(modeloCombo);
     }
 
     private void colorBotones() {

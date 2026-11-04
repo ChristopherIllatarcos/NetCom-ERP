@@ -62,7 +62,6 @@ public class IFrmParametrosCorrelativos extends javax.swing.JInternalFrame {
         String tipoDoc = tblListado.getValueAt(filaSeleccionada, 1).toString();
         String actualStr = tblListado.getValueAt(filaSeleccionada, 3).toString();
 
-      
         String nuevoValorStr = utilidades.InputUtil.mostrarInput(
                 this,
                 "Modificar Correlativo",
@@ -76,15 +75,15 @@ public class IFrmParametrosCorrelativos extends javax.swing.JInternalFrame {
                 boolean actualizado = dao.actualizarCorrelativo(idCorrelativo, nuevoCorrelativo);
 
                 if (actualizado) {
-                   
+
                     utilidades.AlertaUtil.mostrarExito(this, "Correlativo actualizado con éxito.");
                     dao.cargarTablaCorrelativos(modeloTabla);
                 } else {
-                    
+
                     utilidades.AlertaUtil.mostrarError(this, "No se pudo actualizar el correlativo.");
                 }
             } catch (NumberFormatException e) {
-               
+
                 utilidades.AlertaUtil.mostrarAdvertencia(this, "Debe ingresar un número entero válido.");
             }
         }
@@ -114,11 +113,16 @@ public class IFrmParametrosCorrelativos extends javax.swing.JInternalFrame {
             bodega = itemBodega.getDescripcion();
         }
 
-        // 2. Guardar/Actualizar en la BD
-        boolean exito = dao.guardarParametrosEmpresa(razon, rut, direccion, telefono, caja, giro, comuna, email, bodega);
+      
+        // 1. Creamos y poblamos el objeto de modelo con los datos de los inputs de la vista
+        modelo.ParametrosEmpresa emp = new modelo.ParametrosEmpresa(
+                razon, rut, direccion, telefono, caja, giro, comuna, email, bodega
+        );
 
+        // 2. Llamamos al DAO pasándole el objeto tipado
+        boolean exito = dao.guardarParametrosEmpresa(emp);
         if (exito) {
-           utilidades.AlertaUtil.mostrarExito(this, "Datos de la empresa guardados correctamente.");
+            utilidades.AlertaUtil.mostrarExito(this, "Datos de la empresa guardados correctamente.");
 
             // 3. Sincronizar y refrescar la vista
             cargarDatosEmpresa();
@@ -169,23 +173,25 @@ public class IFrmParametrosCorrelativos extends javax.swing.JInternalFrame {
     }
 
     private void cargarDatosEmpresa() {
-        String[] datos = dao.obtenerParametrosEmpresa();
-        if (datos[0] != null) {
-            txtRazonSocial.setText(datos[0]);
-            txtRutEmpresa.setText(datos[1]);
-            txtDireccionMatriz.setText(datos[2]);
-            txtTelefono.setText(datos[3]);
+        // Obtenemos el objeto tipado desde el DAO
+        modelo.ParametrosEmpresa emp = dao.obtenerParametrosEmpresa();
 
-            if (datos[4] != null) {
-                seleccionarItemCombo(cmbCajaDefecto, datos[4]);
+        if (emp != null) {
+            txtRazonSocial.setText(emp.getRazonSocial());
+            txtRutEmpresa.setText(emp.getRutEmpresa());
+            txtDireccionMatriz.setText(emp.getDireccionMatriz());
+            txtTelefono.setText(emp.getTelefono());
+
+            if (emp.getCajaDefecto() != null) {
+                seleccionarItemCombo(cmbCajaDefecto, emp.getCajaDefecto());
             }
 
-            txtGiro.setText(datos[5]);
-            txtComuna.setText(datos[6]);
-            txtEmail.setText(datos[7]);
+            txtGiro.setText(emp.getGiro());
+            txtComuna.setText(emp.getComuna());
+            txtEmail.setText(emp.getEmail());
 
-            if (datos[8] != null) {
-                seleccionarItemCombo(cmbBodega, datos[8]);
+            if (emp.getBodega() != null) {
+                seleccionarItemCombo(cmbBodega, emp.getBodega());
             }
         }
     }

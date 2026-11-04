@@ -3,6 +3,7 @@ package dao;
 import conexion.ConexionDB;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class MantenimientoDAO {
                 tablas.add(rs.getString("tablename"));
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.err.println("Error al obtener las tablas de la BD: " + e.getMessage());
         }
 
@@ -48,7 +49,7 @@ public class MantenimientoDAO {
             st.execute(sql);
             return true;
 
-        } catch (Exception e) {
+        } catch (java.sql.SQLException e) {
             System.err.println("Error en MantenimientoDAO [" + sql + "]: " + e.getMessage());
             return false;
         }

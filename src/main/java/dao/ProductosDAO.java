@@ -5,17 +5,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import modelo.ItemCombo; 
+import java.util.ArrayList;
+import java.util.List;
+import modelo.ItemCombo;
 import modelo.Producto;
 
 public class ProductosDAO {
 
     public int obtenerIdPorCodigo(String codigo) {
-        // CORREGIDO: Usamos únicamente la columna real 'codigo' y el 'id'
         String sql = "SELECT id FROM productos WHERE codigo = ? OR id::text = ?";
+
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setString(1, codigo);
             ps.setString(2, codigo);
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id");
@@ -24,7 +28,8 @@ public class ProductosDAO {
         } catch (SQLException e) {
             System.err.println("Error al obtener ID del producto: " + e.getMessage());
         }
-        return 1; // ID por defecto en caso de no hallarlo
+
+        return -1; // Retornamos -1 como código centinela de "No encontrado"
     }
 
     public Producto obtenerProductoPorCodigo(String codigo) {
@@ -57,18 +62,21 @@ public class ProductosDAO {
     }
 
     // 1. Cargar Familias (reemplaza a categorías)
-    public void cargarCategorias(javax.swing.JComboBox<ItemCombo> cmb) {
-        cmb.removeAllItems();
-        cmb.addItem(new ItemCombo(0, "-- SELECCIONE FAMILIA --"));
+    public List<ItemCombo> listarFamiliasCombo() {
+        List<ItemCombo> lista = new ArrayList<>();
+        lista.add(new ItemCombo(0, "-- SELECCIONE FAMILIA --"));
+
         String sql = "SELECT id, nombre FROM familias ORDER BY nombre ASC";
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
-                cmb.addItem(new ItemCombo(rs.getInt("id"), rs.getString("nombre")));
+                lista.add(new ItemCombo(rs.getInt("id"), rs.getString("nombre")));
             }
         } catch (SQLException e) {
-            System.err.println("Error al cargar familias: " + e.getMessage());
+            System.err.println("Error al listar familias para combo: " + e.getMessage());
         }
+        return lista;
     }
 
     // 2. Cargar Impuestos Adicionales
@@ -78,9 +86,22 @@ public class ProductosDAO {
     }
 
     // 3. Cargar Ubicaciones en Bodega
-    public void cargarUbicaciones(javax.swing.JComboBox<ItemCombo> cmb) {
-        cmb.removeAllItems();
-        cmb.addItem(new ItemCombo(0, "-- BODEGA PRINCIPAL --"));
+    public List<ItemCombo> listarUbicacionesCombo() {
+        List<ItemCombo> lista = new ArrayList<>();
+        // Opción por defecto
+        lista.add(new ItemCombo(0, "-- BODEGA PRINCIPAL --"));
+
+        String sql = "SELECT id, nombre FROM ubicaciones ORDER BY nombre ASC";
+
+        try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                lista.add(new ItemCombo(rs.getInt("id"), rs.getString("nombre")));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al listar ubicaciones para combo: " + e.getMessage());
+        }
+        return lista;
     }
 
     // 4. Contar Total de Productos Registrados
@@ -103,25 +124,31 @@ public class ProductosDAO {
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, p.getCodigoInterno());  // 1. codigo (interno)
-            ps.setString(2, p.getCodigoBarra());    // 2. codigo_barra independiente
-            ps.setString(3, p.getDescripcion());    // 3. nombre
-            ps.setString(4, p.getDescripcion());    // 4. descripcion
-            ps.setInt(5, p.getCategoriaId());       // 5. familia_id
-            ps.setDouble(6, p.getCostoNeto());      // 6. precio_compra (NUMERIC)
-            ps.setDouble(7, p.getPrecioUnitario()); // 7. precio_venta (NUMERIC)
-            ps.setDouble(8, p.getStockActual());    // 8. stock_actual
-            ps.setDouble(9, p.getStockMinimo());    // 9. stock_minimo
-            ps.setDouble(10, 0.0);                  // 10. stock_maximo por defecto
-            ps.setString(11, "UN");                 // 11. unidad_medida por defecto
-            ps.setString(12, "Bodega Principal");     // 12. ubicacion por defecto
-            ps.setBoolean(13, p.isActivo());        // 13. activo (BOOL)
+            ps.setString(1, p.getCodigoInterno());
+            ps.setString(2, p.getCodigoBarra());
+            ps.setString(3, p.getDescripcion());     // Usamos descripcion como nombre
+            ps.setString(4, p.getDescripcion());     // Usamos descripcion como descripcion detallada
+            ps.setInt(5, p.getCategoriaId());        // familia_id (cmbFamiliaCategoria)
+            ps.setDouble(6, p.getCostoNeto());       // precio_compra
+            ps.setDouble(7, p.getPrecioUnitario());  // precio_venta
+            ps.setDouble(8, p.getStockActual());     // stock_actual
+            ps.setDouble(9, p.getStockMinimo());     // stock_minimo
+            ps.setDouble(10, 0.0);                   // stock_maximo por defecto (o puedes agregarlo a tu clase si lo necesitas)
+            ps.setString(11, "UN");                  // unidad_medida por defecto
+            ps.setInt(12, p.getUbicacionBodegaId()); // ID de la bodega desde cmbUbicacionBodega
+            ps.setBoolean(13, p.isActivo());         // activo
 
-            ps.executeUpdate();
-            return true;
+            // Blindaje: Validamos que realmente se haya insertado al menos una fila
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
 
         } catch (SQLException e) {
-            System.err.println("Error al guardar producto: " + e.getMessage());
+            // Blindaje de excepciones: Detectar clave duplicada en PostgreSQL (SQLState 23505)
+            if ("23505".equals(e.getSQLState())) {
+                System.err.println("Error de BD: El código interno o código de barra ya se encuentra registrado.");
+            } else {
+                System.err.println("Error crítico al guardar producto: " + e.getMessage());
+            }
             return false;
         }
     }
@@ -182,11 +209,15 @@ public class ProductosDAO {
             ps.setBoolean(9, p.isActivo());
             ps.setInt(10, p.getId());
 
-            ps.executeUpdate();
-            return true;
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0; // Retorna true solo si realmente actualizó el registro
 
         } catch (SQLException e) {
-            System.err.println("Error al actualizar producto: " + e.getMessage());
+            if ("23505".equals(e.getSQLState())) {
+                System.err.println("Error de BD: El código o código de barra ya pertenece a otro producto.");
+            } else {
+                System.err.println("Error al actualizar producto: " + e.getMessage());
+            }
             return false;
         }
     }
@@ -197,10 +228,15 @@ public class ProductosDAO {
 
         try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
-            ps.executeUpdate();
-            return true;
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0; // Retorna true solo si el producto realmente existía y fue borrado
+
         } catch (SQLException e) {
-            System.err.println("Error al eliminar producto: " + e.getMessage());
+            if ("23503".equals(e.getSQLState())) {
+                System.err.println("Error de integridad: No se puede eliminar el producto porque tiene registros asociados (ventas/compras).");
+            } else {
+                System.err.println("Error al eliminar producto: " + e.getMessage());
+            }
             return false;
         }
     }

@@ -14,30 +14,31 @@ import javax.swing.table.DefaultTableModel;
 
 public class ParametrosCorrelativosDAO {
 
-    public String[] obtenerParametrosEmpresa() {
-        String[] datos = new String[9];
+    public modelo.ParametrosEmpresa obtenerParametrosEmpresa() {
+        modelo.ParametrosEmpresa emp = null;
         String sql = "SELECT razon_social, rut_empresa, direccion_matriz, telefono, caja_defecto, giro, comuna, email, bodega FROM empresa_parametros LIMIT 1";
 
         try (Connection con = ConexionDB.getConnection(); Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql)) {
 
             if (rs.next()) {
-                datos[0] = rs.getString("razon_social");
-                datos[1] = rs.getString("rut_empresa");
-                datos[2] = rs.getString("direccion_matriz");
-                datos[3] = rs.getString("telefono");
-                datos[4] = rs.getString("caja_defecto");
-                datos[5] = rs.getString("giro");
-                datos[6] = rs.getString("comuna");
-                datos[7] = rs.getString("email");
-                datos[8] = rs.getString("bodega");
+                emp = new modelo.ParametrosEmpresa();
+                emp.setRazonSocial(rs.getString("razon_social"));
+                emp.setRutEmpresa(rs.getString("rut_empresa"));
+                emp.setDireccionMatriz(rs.getString("direccion_matriz"));
+                emp.setTelefono(rs.getString("telefono"));
+                emp.setCajaDefecto(rs.getString("caja_defecto"));
+                emp.setGiro(rs.getString("giro"));
+                emp.setComuna(rs.getString("comuna"));
+                emp.setEmail(rs.getString("email"));
+                emp.setBodega(rs.getString("bodega"));
             }
         } catch (SQLException e) {
             System.err.println("Error al obtener parámetros de empresa: " + e.getMessage());
         }
-        return datos;
+        return emp;
     }
 
-    public boolean guardarParametrosEmpresa(String razon, String rut, String direccion, String tel, String caja, String giro, String comuna, String email, String bodega) {
+    public boolean guardarParametrosEmpresa(modelo.ParametrosEmpresa emp) {
         String sqlCheck = "SELECT COUNT(*) FROM empresa_parametros";
         String sqlUpdate = "UPDATE empresa_parametros SET razon_social=?, rut_empresa=?, direccion_matriz=?, telefono=?, caja_defecto=?, giro=?, comuna=?, email=?, bodega=?";
         String sqlInsert = "INSERT INTO empresa_parametros (razon_social, rut_empresa, direccion_matriz, telefono, caja_defecto, giro, comuna, email, bodega) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -47,33 +48,21 @@ public class ParametrosCorrelativosDAO {
             rs.next();
             int count = rs.getInt(1);
 
-            if (count > 0) {
-                try (PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
-                    ps.setString(1, razon);
-                    ps.setString(2, rut);
-                    ps.setString(3, direccion);
-                    ps.setString(4, tel);
-                    ps.setString(5, caja);
-                    ps.setString(6, giro);
-                    ps.setString(7, comuna);
-                    ps.setString(8, email);
-                    ps.setString(9, bodega);
-                    ps.executeUpdate();
-                }
-            } else {
-                try (PreparedStatement ps = con.prepareStatement(sqlInsert)) {
-                    ps.setString(1, razon);
-                    ps.setString(2, rut);
-                    ps.setString(3, direccion);
-                    ps.setString(4, tel);
-                    ps.setString(5, caja);
-                    ps.setString(6, giro);
-                    ps.setString(7, comuna);
-                    ps.setString(8, email);
-                    ps.setString(9, bodega);
-                    ps.executeUpdate();
-                }
+            String sqlToExecute = (count > 0) ? sqlUpdate : sqlInsert;
+
+            try (PreparedStatement ps = con.prepareStatement(sqlToExecute)) {
+                ps.setString(1, emp.getRazonSocial());
+                ps.setString(2, emp.getRutEmpresa());
+                ps.setString(3, emp.getDireccionMatriz());
+                ps.setString(4, emp.getTelefono());
+                ps.setString(5, emp.getCajaDefecto());
+                ps.setString(6, emp.getGiro());
+                ps.setString(7, emp.getComuna());
+                ps.setString(8, emp.getEmail());
+                ps.setString(9, emp.getBodega());
+                ps.executeUpdate();
             }
+
             return true;
         } catch (SQLException e) {
             System.err.println("Error al guardar parámetros de empresa: " + e.getMessage());
@@ -134,18 +123,16 @@ public class ParametrosCorrelativosDAO {
     /**
      * 6. Lista las cajas (terminales POS) desde la base de datos envueltas en
      * objetos ItemCombo.
-     * @return 
+     *
+     * @return
      */
-  
     public List<ItemCombo> listarCajasCombo() {
         List<ItemCombo> lista = new ArrayList<>();
         lista.add(new ItemCombo(0, "-- SELECCIONE CAJA --"));
 
         String sql = "SELECT id, nombre_terminal FROM terminales_pos WHERE activo = true ORDER BY nombre_terminal ASC";
 
-        try (Connection con = ConexionDB.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 lista.add(new ItemCombo(rs.getInt("id"), rs.getString("nombre_terminal")));
@@ -155,7 +142,6 @@ public class ParametrosCorrelativosDAO {
         }
         return lista;
     }
-
 
     /**
      * 3. Carga el listado de correlativos de documentos en el DefaultTableModel
@@ -183,10 +169,5 @@ public class ParametrosCorrelativosDAO {
             System.err.println("Error al cargar correlativos en tabla: " + e.getMessage());
         }
     }
-    
-    
-    
-  
-    
 
 }
