@@ -15,6 +15,7 @@ public class IFrmIngresoCompras extends javax.swing.JInternalFrame {
     private javax.swing.table.DefaultTableModel modeloTablaDetalle;
     private final dao.CondicionPagoDAO condicionPagoDAO = new dao.CondicionPagoDAO();
     private final dao.ProductosDAO productoDAO = new dao.ProductosDAO();
+    private int idTipoDocSeleccionado = -1;
 
     private final DecimalFormatSymbols simbolos = new DecimalFormatSymbols() {
         {
@@ -150,8 +151,9 @@ public class IFrmIngresoCompras extends javax.swing.JInternalFrame {
                         seleccionadoEdit
                 );
 
-                if (nuevoNombre != null && !nuevoNombre.trim().isEmpty() && !nuevoNombre.trim().equals(seleccionadoEdit)) {
-                    boolean exito = tipoDocDAO.actualizarTipoDocumento(seleccionadoEdit, nuevoNombre.trim());
+               
+                if (nuevoNombre != null && !nuevoNombre.trim().isEmpty()) {
+                    boolean exito = tipoDocDAO.actualizarTipoDocumento(idTipoDocSeleccionado, nuevoNombre.trim());
                     if (exito) {
                         utilidades.AlertaUtil.mostrarExito("Éxito", "Tipo de documento actualizado con éxito.");
                         cargarComboTipoDoc();

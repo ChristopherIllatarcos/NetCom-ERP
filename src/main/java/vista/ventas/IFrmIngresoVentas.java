@@ -22,7 +22,6 @@ public class IFrmIngresoVentas extends javax.swing.JInternalFrame {
     private final TipoDocumentoDAO tipoDocDAO = new TipoDocumentoDAO();
     private final dao.CondicionPagoDAO condicionPagoDAO = new dao.CondicionPagoDAO();
 
-    
     public IFrmIngresoVentas() {
         initComponents();
         aplicarEfectoHover(btnGuardar);
@@ -48,7 +47,7 @@ public class IFrmIngresoVentas extends javax.swing.JInternalFrame {
 
             btnAgregar.doClick();
         };
-        
+
         txtCant.addActionListener(accionEnter);
         txtDescripcion.addActionListener(accionEnter);
     }
@@ -165,13 +164,23 @@ public class IFrmIngresoVentas extends javax.swing.JInternalFrame {
                 );
 
                 if (nuevoNombre != null && !nuevoNombre.trim().isEmpty() && !nuevoNombre.trim().equals(seleccionadoEdit)) {
-                    boolean exito = tipoDocDAO.actualizarTipoDocumento(seleccionadoEdit, nuevoNombre.trim());
-                    if (exito) {
-                        utilidades.AlertaUtil.mostrarExito(this, "Tipo de documento actualizado con éxito.");
-                        cargarComboTipoDoc();
-                        cmbTipoDoc.setSelectedItem(nuevoNombre.trim());
+
+                    // 1. Buscamos el ID real en la base de datos usando el nombre seleccionado
+                    int idTipo = tipoDocDAO.obtenerIdPorNombre(seleccionadoEdit);
+
+                    if (idTipo != -1) {
+                        // 2. Ejecutamos la actualización enviando el ID (int) y el nuevo nombre (String)
+                        boolean exito = tipoDocDAO.actualizarTipoDocumento(idTipo, nuevoNombre.trim().toUpperCase());
+
+                        if (exito) {
+                            utilidades.AlertaUtil.mostrarExito(this, "Tipo de documento actualizado con éxito.");
+                            cargarComboTipoDoc();
+                            cmbTipoDoc.setSelectedItem(nuevoNombre.trim().toUpperCase());
+                        } else {
+                            utilidades.AlertaUtil.mostrarError(this, "No se pudo actualizar el tipo de documento.");
+                        }
                     } else {
-                        utilidades.AlertaUtil.mostrarError(this, "No se pudo actualizar el tipo de documento.");
+                        utilidades.AlertaUtil.mostrarError(this, "No se pudo encontrar el ID del registro seleccionado.");
                     }
                 }
             }

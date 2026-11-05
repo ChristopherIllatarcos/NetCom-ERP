@@ -4,7 +4,6 @@ import dao.HojaRutaDAO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class IFrmConsultaHojasRuta extends javax.swing.JInternalFrame {

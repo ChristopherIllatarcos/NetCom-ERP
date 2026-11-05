@@ -1,14 +1,14 @@
 package vista.ventas;
 
+import dao.TipoDocumentoDAO;
+
 /**
  *
  * @author caill
  */
 public class IFrmConsultaDocumentos extends javax.swing.JInternalFrame {
 
-    /**
-     * Creates new form JInternalFrameConsultaDocumentos
-     */
+//    private TipoDocumentoDAO tipoDocDAO = new TipoDocumentoDAO();
     public IFrmConsultaDocumentos() {
         initComponents();
         colorBotones();
@@ -122,7 +122,6 @@ public class IFrmConsultaDocumentos extends javax.swing.JInternalFrame {
 
         switch (seleccion) {
             case 0 -> {
-                
                 String nuevoTipo = utilidades.AlertaUtil.mostrarInput(
                         this,
                         "Nuevo Tipo de Documento",
@@ -146,7 +145,6 @@ public class IFrmConsultaDocumentos extends javax.swing.JInternalFrame {
 
             case 1 -> {
                 // EDITAR
-                // Obtenemos los tipos actuales para que el usuario elija cuál editar
                 java.util.List<String> tiposActuales = tipoDao.listarTiposDocumentoActivos();
                 if (tiposActuales.isEmpty()) {
                     utilidades.AlertaUtil.mostrarError(this, "No hay tipos de documento para editar.");
@@ -161,20 +159,31 @@ public class IFrmConsultaDocumentos extends javax.swing.JInternalFrame {
                 );
 
                 if (aEditar != null) {
+                    String nombreActual = aEditar;
+
                     String nuevoNombre = utilidades.AlertaUtil.mostrarInput(
                             this,
                             "Modificar Nombre",
                             "Ingrese el nuevo nombre:",
-                            aEditar
+                            nombreActual
                     );
+
                     if (nuevoNombre != null && !nuevoNombre.trim().isEmpty()) {
                         nuevoNombre = nuevoNombre.trim().toUpperCase();
-                        // Usamos tu método existente en el DAO para actualizar
-                        if (tipoDao.actualizarTipoDocumento(aEditar, nuevoNombre)) {
-                            utilidades.AlertaUtil.mostrarExito(this, "¡Actualizado con éxito!");
-                            cargarComboTiposDocumento();
+
+                        // 1. Buscamos el ID real en la BD usando el nombre seleccionado
+                        int idTipo = tipoDao.obtenerIdPorNombre(nombreActual);
+
+                        if (idTipo != -1) {
+                            // 2. Actualizamos usando el ID numérico (¡Arquitectura limpia!)
+                            if (tipoDao.actualizarTipoDocumento(idTipo, nuevoNombre)) {
+                                utilidades.AlertaUtil.mostrarExito(this, "¡Actualizado con éxito!");
+                                cargarComboTiposDocumento();
+                            } else {
+                                utilidades.AlertaUtil.mostrarError(this, "No se pudo actualizar el tipo de documento.");
+                            }
                         } else {
-                            utilidades.AlertaUtil.mostrarError(this, "Error al actualizar.");
+                            utilidades.AlertaUtil.mostrarError(this, "No se pudo encontrar el ID del registro.");
                         }
                     }
                 }
@@ -196,20 +205,17 @@ public class IFrmConsultaDocumentos extends javax.swing.JInternalFrame {
                 );
 
                 if (aBorrar != null) {
-                    // 1. Usamos tu método de confirmación moderno (con título y mensaje)
                     boolean confirmar = utilidades.AlertaUtil.mostrarConfirmacion(
                             "Confirmar Eliminación",
                             "¿Está seguro de eliminar el tipo: " + aBorrar + "?"
                     );
 
                     if (confirmar) {
-                        // Usamos tu método existente en el DAO para borrado lógico
+                        // Usamos tipoDao unificado para el borrado lógico por nombre
                         if (tipoDao.eliminarTipoDocumento(aBorrar)) {
-                            // 2. Éxito moderno con borde verde
                             utilidades.AlertaUtil.mostrarExito(this, "¡Eliminado con éxito!");
                             cargarComboTiposDocumento();
                         } else {
-                            // 3. Error moderno con borde rojo
                             utilidades.AlertaUtil.mostrarError(this, "Error al eliminar el tipo de documento.");
                         }
                     }
@@ -219,7 +225,6 @@ public class IFrmConsultaDocumentos extends javax.swing.JInternalFrame {
             default -> {
             }
         }
-        // Cancelar 
     }
 
     private void colorBotones() {

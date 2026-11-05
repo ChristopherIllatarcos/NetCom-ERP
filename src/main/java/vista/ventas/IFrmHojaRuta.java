@@ -1,11 +1,8 @@
 package vista.ventas;
 
-import java.awt.Component;
-import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
-import vista.FrmMenuPrincipal;
 
 /**
  *
@@ -181,26 +178,25 @@ public class IFrmHojaRuta extends javax.swing.JInternalFrame {
 
     private void botonConsultar() {
         try {
-            // 1. Instanciamos la nueva ventana de Hoja de Ruta
+            // 1. Instanciamos la ventana correcta de Consulta de Hojas de Ruta
             vista.ventas.IFrmConsultaHojasRuta frameHojaRuta = new vista.ventas.IFrmConsultaHojasRuta();
 
             // 2. Obtenemos el contenedor principal de forma segura desde la jerarquía visual actual
             javax.swing.JFrame ventanaPrincipal = (javax.swing.JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
 
-            if (ventanaPrincipal instanceof vista.FrmMenuPrincipal) {
-                vista.FrmMenuPrincipal menu = (vista.FrmMenuPrincipal) ventanaPrincipal;
-
+            if (ventanaPrincipal instanceof vista.FrmMenuPrincipal menu) {
+                menu.getDesktopPane().add(frameHojaRuta);
             }
 
-            // La hacemos visible y al frente
+            // 4. La hacemos visible, al frente y seleccionada
             frameHojaRuta.setVisible(true);
             frameHojaRuta.setSelected(true);
 
-            // Cerramos el submenú actual si corresponde
+            // 5. Cerramos el submenú actual
             this.dispose();
 
         } catch (java.beans.PropertyVetoException e) {
-            System.out.println("Error al abrir Hoja de Ruta: " + e.getMessage());
+            System.out.println("Error al abrir Consulta de Hoja de Ruta: " + e.getMessage());
         }
     }
 

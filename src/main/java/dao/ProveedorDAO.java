@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import modelo.Proveedor;
 
-
 public class ProveedorDAO {
 
     // 1. LISTAR TODOS LOS PROVEEDORES
@@ -18,14 +17,7 @@ public class ProveedorDAO {
         String sql = "SELECT id, rut, nombre, direccion, ciudad, telefono, casilla, email, contacto, activo "
                 + "FROM proveedores ORDER BY nombre ASC";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            con = ConexionDB.getConnection();
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Proveedor p = new Proveedor();
@@ -44,20 +36,6 @@ public class ProveedorDAO {
 
         } catch (SQLException e) {
             System.err.println("Error al listar proveedores: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Error al cerrar conexión: " + e.getMessage());
-            }
         }
 
         return lista;
@@ -70,47 +48,29 @@ public class ProveedorDAO {
         String sql = "SELECT id, rut, nombre, direccion, ciudad, telefono, casilla, email, contacto, activo "
                 + "FROM proveedores WHERE LOWER(" + columna + ") LIKE LOWER(?) ORDER BY nombre ASC";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+        try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-        try {
-            con = ConexionDB.getConnection();
-            ps = con.prepareStatement(sql);
-            ps.setString(1, "%" + valor + "%");
-            rs = ps.executeQuery();
+            ps.setString(1, "%" + (valor != null ? valor.trim() : "") + "%");
 
-            while (rs.next()) {
-                Proveedor p = new Proveedor();
-                p.setId(rs.getInt("id"));
-                p.setRut(rs.getString("rut"));
-                p.setNombre(rs.getString("nombre"));
-                p.setDireccion(rs.getString("direccion"));
-                p.setCiudad(rs.getString("ciudad"));
-                p.setTelefono(rs.getString("telefono"));
-                p.setCasilla(rs.getString("casilla"));
-                p.setEmail(rs.getString("email"));
-                p.setContacto(rs.getString("contacto"));
-                p.setActivo(rs.getBoolean("activo"));
-                lista.add(p);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Proveedor p = new Proveedor();
+                    p.setId(rs.getInt("id"));
+                    p.setRut(rs.getString("rut"));
+                    p.setNombre(rs.getString("nombre"));
+                    p.setDireccion(rs.getString("direccion"));
+                    p.setCiudad(rs.getString("ciudad"));
+                    p.setTelefono(rs.getString("telefono"));
+                    p.setCasilla(rs.getString("casilla"));
+                    p.setEmail(rs.getString("email"));
+                    p.setContacto(rs.getString("contacto"));
+                    p.setActivo(rs.getBoolean("activo"));
+                    lista.add(p);
+                }
             }
 
         } catch (SQLException e) {
             System.err.println("Error al buscar proveedores: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Error al cerrar conexión: " + e.getMessage());
-            }
         }
 
         return lista;
@@ -121,12 +81,7 @@ public class ProveedorDAO {
         String sql = "INSERT INTO proveedores (rut, nombre, direccion, ciudad, telefono, casilla, email, contacto, activo, created_at) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-
-        try {
-            con = ConexionDB.getConnection();
-            ps = con.prepareStatement(sql);
+        try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, p.getRut());
             ps.setString(2, p.getNombre());
@@ -141,19 +96,12 @@ public class ProveedorDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Error al guardar proveedor: " + e.getMessage());
-            return false;
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Error al cerrar conexión: " + e.getMessage());
+            if ("23505".equals(e.getSQLState())) {
+                System.err.println("Error de BD: El RUT del proveedor ya se encuentra registrado.");
+            } else {
+                System.err.println("Error al guardar proveedor: " + e.getMessage());
             }
+            return false;
         }
     }
 
@@ -163,12 +111,7 @@ public class ProveedorDAO {
                 + "telefono = ?, casilla = ?, email = ?, contacto = ?, activo = ?, updated_at = CURRENT_TIMESTAMP "
                 + "WHERE id = ?";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-
-        try {
-            con = ConexionDB.getConnection();
-            ps = con.prepareStatement(sql);
+        try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, p.getRut());
             ps.setString(2, p.getNombre());
@@ -184,19 +127,12 @@ public class ProveedorDAO {
             return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Error al actualizar proveedor: " + e.getMessage());
-            return false;
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Error al cerrar conexión: " + e.getMessage());
+            if ("23505".equals(e.getSQLState())) {
+                System.err.println("Error de BD: El RUT ya pertenece a otro proveedor registrado.");
+            } else {
+                System.err.println("Error al actualizar proveedor: " + e.getMessage());
             }
+            return false;
         }
     }
 
@@ -204,12 +140,7 @@ public class ProveedorDAO {
     public boolean eliminarProveedor(int id) {
         String sql = "UPDATE proveedores SET activo = false, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
 
-        Connection con = null;
-        PreparedStatement ps = null;
-
-        try {
-            con = ConexionDB.getConnection();
-            ps = con.prepareStatement(sql);
+        try (Connection con = ConexionDB.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
@@ -217,17 +148,6 @@ public class ProveedorDAO {
         } catch (SQLException e) {
             System.err.println("Error al desactivar proveedor: " + e.getMessage());
             return false;
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Error al cerrar conexión: " + e.getMessage());
-            }
         }
     }
 }
